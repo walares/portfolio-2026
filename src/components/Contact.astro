@@ -182,10 +182,16 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 						</p>
 					</form>
 					<script>
+						import { smoothScrollToElement } from "../scripts/smooth-scroll";
+
 						const params = new URLSearchParams(window.location.search);
 						if (params.get("enviado") === "1") {
 							document.getElementById("contacto-enviado")?.classList.remove("hidden");
-							document.getElementById("contacto")?.scrollIntoView({ behavior: "smooth", block: "start" });
+							const contacto = document.getElementById("contacto");
+							// Formspree redirige con #contacto; el navegador ya posiciona la vista
+							if (contacto && !window.location.hash.includes("contacto")) {
+								smoothScrollToElement(contacto, { block: "start" });
+							}
 						}
 					</script>
 					</>

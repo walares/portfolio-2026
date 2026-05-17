@@ -31,7 +31,7 @@
 
 /* Estilos globales base */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto; /* scroll suave vía smooth-scroll.ts */
   color-scheme: dark;
 }
 

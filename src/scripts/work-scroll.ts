@@ -2,6 +2,8 @@
  * Catálogo #work: scroll pinneado, apertura de “puerta” y proyectos en secuencia.
  * Inspirado en wodniack.dev/work — sin dependencias externas.
  */
+import { smoothScrollTo, smoothScrollToElement } from "./smooth-scroll";
+
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 const DOOR_START = 0.06;
@@ -78,7 +80,7 @@ function initWorkScroll(): void {
 		update();
 	};
 
-	const scheduleJumpEndCheck = (targetIndex: number): void => {
+	const scheduleJumpEndCheck = (targetIndex: number, startedAt = performance.now()): void => {
 		clearTimeout(jumpEndTimer);
 		jumpEndTimer = setTimeout(() => {
 			const scrollable = root.offsetHeight - window.innerHeight;
@@ -89,10 +91,11 @@ function initWorkScroll(): void {
 			const raw = clamp(-root.getBoundingClientRect().top / scrollable);
 			const n = items.length || 1;
 			const targetRaw = getProjectTargetProgress(targetIndex, n);
-			if (Math.abs(raw - targetRaw) < 0.02) {
+			const timedOut = performance.now() - startedAt > 1200;
+			if (Math.abs(raw - targetRaw) < 0.02 || timedOut) {
 				endNavJump();
 			} else {
-				scheduleJumpEndCheck(targetIndex);
+				scheduleJumpEndCheck(targetIndex, startedAt);
 			}
 		}, 80);
 	};
@@ -102,7 +105,9 @@ function initWorkScroll(): void {
 		const safeIndex = clamp(index, 0, n - 1);
 
 		if (reduced.matches) {
-			items[safeIndex]?.scrollIntoView({ behavior: "smooth", block: "center" });
+			const item = items[safeIndex];
+			if (item) smoothScrollToElement(item, { block: "center" });
+			else window.scrollTo(0, 0);
 			snapProjectVisuals(safeIndex);
 			return;
 		}
@@ -119,7 +124,7 @@ function initWorkScroll(): void {
 		root.classList.add("is-nav-jumping");
 		snapProjectVisuals(safeIndex);
 
-		window.scrollTo({ top: targetY, behavior: "smooth" });
+		smoothScrollTo(targetY);
 		scheduleJumpEndCheck(safeIndex);
 	};
 
