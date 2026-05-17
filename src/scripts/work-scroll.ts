@@ -23,12 +23,17 @@ function getActiveIndex(raw: number, count: number): number {
 	return Math.min(count - 1, Math.max(0, Math.floor((raw - PROJECTS_START) / slice)));
 }
 
+/** Fracción del tramo de cada proyecto reservada a entrada / salida (resto = nítido). */
+const ITEM_FADE_IN = 0.14;
+const ITEM_FADE_OUT_START = 0.78;
+const ITEM_FADE_OUT_END = 0.95;
+
 /** Progreso de scroll donde el proyecto queda en su punto más visible. */
 function getProjectTargetProgress(index: number, count: number): number {
 	const span = PROJECTS_END - PROJECTS_START;
 	const slice = span / count;
 	const start = PROJECTS_START + slice * index;
-	return start + slice * 0.42;
+	return start + slice * (ITEM_FADE_IN + (ITEM_FADE_OUT_START - ITEM_FADE_IN) * 0.5);
 }
 
 function initWorkScroll(): void {
@@ -167,25 +172,26 @@ function initWorkScroll(): void {
 
 		items.forEach((item, i) => {
 			const start = PROJECTS_START + slice * i;
-			const peak = start + slice * 0.38;
-			const end = start + slice * 0.92;
+			const enterEnd = start + slice * ITEM_FADE_IN;
+			const exitStart = start + slice * ITEM_FADE_OUT_START;
+			const exitEnd = start + slice * ITEM_FADE_OUT_END;
 			const isLast = i === n - 1;
 
 			let local = 0;
 			if (raw < start) {
 				local = 0;
-			} else if (raw < peak) {
-				local = easeOutCubic((raw - start) / (peak - start));
-			} else if (isLast) {
+			} else if (raw < enterEnd) {
+				local = easeOutCubic((raw - start) / (enterEnd - start));
+			} else if (isLast || raw < exitStart) {
 				local = 1;
-			} else if (raw < end) {
-				local = 1 - easeOutCubic((raw - peak) / (end - peak));
+			} else if (raw < exitEnd) {
+				local = 1 - easeOutCubic((raw - exitStart) / (exitEnd - exitStart));
 			} else {
 				local = 0;
 			}
 
 			item.style.setProperty("--item-progress", String(clamp(local)));
-			item.classList.toggle("is-active", local > 0.35);
+			item.classList.toggle("is-active", local > 0.5);
 		});
 
 		const activeIndex = getActiveIndex(raw, n);
