@@ -1,0 +1,36 @@
+---
+import { site } from "../data/site";
+
+type Size = "nav" | "footer";
+
+interface Props {
+	size?: Size;
+	showWordmark?: boolean;
+}
+
+const { size = "nav", showWordmark = false } = Astro.props;
+
+const dimensions = { nav: 36, footer: 40 } as const;
+const dim = dimensions[size];
+---
+
+<span class="inline-flex items-center gap-2.5">
+	<img
+		src={site.logoPath}
+		alt=""
+		width={dim}
+		height={dim}
+		class:list={[
+			"shrink-0 rounded-full object-cover",
+			size === "nav" ? "h-9 w-9" : "h-10 w-10",
+		]}
+		decoding="async"
+	/>
+	{
+		showWordmark && (
+			<span class="font-display text-xl font-semibold tracking-tight text-white sm:text-2xl">
+				AE<span class="text-brand-green">.</span> Webdes
+			</span>
+		)
+	}
+</span>

@@ -1,0 +1,104 @@
+---
+import { MessageCircle, Menu, ChevronDown } from "@lucide/astro";
+import BrandLogo from "./BrandLogo.astro";
+import { site } from "../data/site";
+
+const links = [
+	{ href: "#inicio", label: "Inicio" },
+	{ href: "#servicios", label: "Servicios" },
+	{ href: "#work", label: "Proyectos" },
+	{ href: "#contacto", label: "Contacto" },
+] as const;
+---
+
+<header class="fixed inset-x-0 top-0 z-50 pointer-events-none" data-site-header>
+	<div
+		data-nav-shell
+		class="pointer-events-auto mx-auto mt-4 flex max-w-6xl items-center justify-between gap-4 rounded-2xl border border-white/[0.07] bg-brand-dark/50 px-4 py-2.5 shadow-[0_8px_40px_-16px_rgb(0_0_0/0.8)] backdrop-blur-xl backdrop-saturate-150 transition-[margin,background,box-shadow,border-color] duration-500 ease-[var(--ease-spring)] supports-[backdrop-filter]:bg-brand-dark/40 sm:px-5"
+	>
+		<a
+			href="#inicio"
+			class="rounded-lg outline-none ring-brand-green/60 ring-offset-2 ring-offset-transparent transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-offset-brand-dark"
+			aria-label={`${site.name} — inicio`}
+		>
+			<BrandLogo size="nav" />
+		</a>
+
+		<nav class="hidden items-center gap-0.5 md:flex" aria-label="Navegación principal en escritorio">
+			<ul class="flex items-center">
+				{
+					links.map(({ href, label }) => (
+						<li>
+							<a
+								href={href}
+								class="rounded-full px-3.5 py-2 text-[0.8125rem] font-medium text-white/70 outline-none ring-brand-green/50 transition hover:bg-white/[0.06] hover:text-white focus-visible:ring-2"
+							>
+								{label}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+
+		<div class="flex items-center gap-2">
+			<a
+				href="#contacto"
+				class="btn-primary group hidden items-center gap-2 rounded-full bg-brand-green px-5 py-2.5 text-sm font-semibold text-brand-dark md:inline-flex"
+			>
+				<MessageCircle size={16} stroke-width={2} class="lucide-anim-hover-pop shrink-0" aria-hidden="true" />
+				Hablemos
+			</a>
+
+			<details class="nav-drawer relative md:hidden">
+				<summary
+					class="list-none flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.1] bg-white/[0.04] px-3 py-2 text-sm font-medium text-white/92 outline-none ring-brand-green/40 [&::-webkit-details-marker]:hidden focus-visible:ring-2"
+					aria-label="Abrir menú"
+				>
+					<Menu size={18} stroke-width={2} class="shrink-0 text-white/85" aria-hidden="true" />
+					Menú
+					<ChevronDown
+						size={16}
+						stroke-width={2}
+						class="nav-drawer-chevron shrink-0 text-white/55"
+						aria-hidden="true"
+					/>
+				</summary>
+				<div
+					class="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-white/[0.1] bg-[color-mix(in_oklab,var(--color-brand-dark)_94%,transparent)] p-2 shadow-black/55 shadow-xl backdrop-blur-2xl"
+				>
+					<ul class="flex flex-col gap-0.5">
+						{
+							links.map(({ href, label }) => (
+								<li>
+									<a
+										href={href}
+										class="block rounded-lg px-3 py-2.5 text-sm text-white/85 transition hover:bg-white/5 hover:text-white"
+									>
+										{label}
+									</a>
+								</li>
+							))
+						}
+					</ul>
+					<a
+						href="#contacto"
+						class="mt-2 flex items-center justify-center gap-2 rounded-lg bg-brand-green px-3 py-2.5 text-center text-sm font-semibold text-brand-dark"
+					>
+						<MessageCircle size={16} stroke-width={2} class="shrink-0" aria-hidden="true" />
+						Hablemos
+					</a>
+				</div>
+			</details>
+		</div>
+	</div>
+</header>
+
+<style>
+	.nav-drawer .nav-drawer-chevron {
+		transition: transform 0.25s ease;
+	}
+	.nav-drawer[open] .nav-drawer-chevron {
+		transform: rotate(180deg);
+	}
+</style>

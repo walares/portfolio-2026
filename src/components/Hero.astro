@@ -1,0 +1,78 @@
+---
+import { ArrowRight, MessageCircle } from "@lucide/astro";
+---
+
+<section
+	id="inicio"
+	class="relative flex min-h-[92dvh] flex-col justify-end overflow-hidden pb-8 pt-28 sm:pb-12 sm:pt-32 lg:min-h-[95dvh] lg:pb-16"
+	aria-labelledby="hero-heading"
+>
+	<!-- Fondo: orbes + grid -->
+	<div class="pointer-events-none absolute inset-0 z-0" data-hero-bg aria-hidden="true">
+		<div class="absolute inset-0 bg-brand-dark"></div>
+		<div
+			class="graphic-orb graphic-orb--green -right-20 top-[12%] size-[min(32rem,70vw)] opacity-40"
+			data-parallax="0.14"
+		/>
+		<div
+			class="graphic-orb graphic-orb--gold -left-24 bottom-[18%] size-[min(22rem,50vw)] opacity-35"
+			data-parallax="0.1"
+		/>
+		<div
+			class="section-grid-bg absolute inset-0 z-[1] opacity-75"
+			data-hero-grid-fallback
+			aria-hidden="true"
+		/>
+		<div
+			class="absolute inset-0 z-[2] bg-gradient-to-b from-brand-dark/45 via-brand-dark/72 to-brand-dark"
+		/>
+		<canvas
+			class="hero-spacetime-grid absolute inset-0 z-[3] block size-full"
+			data-hero-spacetime-grid
+			aria-hidden="true"
+		></canvas>
+	</div>
+
+	<div class="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+		<div class="max-w-4xl">
+			<p class="eyebrow-pill reveal mb-6 sm:mb-8">
+				<span class="relative flex size-2" aria-hidden="true">
+					<span class="absolute inline-flex size-full animate-ping rounded-full bg-brand-green/60 opacity-75"></span>
+					<span class="relative inline-flex size-2 rounded-full bg-brand-green"></span>
+				</span>
+				Aceptamos nuevos proyectos
+			</p>
+
+			<h1
+				id="hero-heading"
+				class="headline-hero reveal-lines text-balance text-[clamp(2.35rem,6.8vw,4.5rem)] text-white"
+			>
+				<span class="reveal-line"><span>Webs rápidas.</span></span>
+				<span class="reveal-line"><span class="headline-muted">Procesos amigables.</span></span>
+				<span class="reveal-line"><span class="text-brand-green">Listas para crecer.</span></span>
+			</h1>
+
+			<p class="text-muted-body reveal mt-6 max-w-xl text-pretty text-base leading-relaxed sm:mt-8 sm:text-lg lg:max-w-2xl">
+				Diseño y desarrollo a medida, siempre con la experiencia del usuario en mente, con foco en el
+				rendimiento y en convertir visitas en contactos.
+			</p>
+
+			<div class="reveal mt-9 flex flex-wrap items-center gap-3 sm:mt-11">
+				<a
+					href="#work"
+					class="btn-primary group inline-flex items-center justify-center gap-2 rounded-full bg-brand-green px-7 py-3.5 text-sm font-semibold text-brand-dark"
+				>
+					Ver proyectos
+					<ArrowRight size={18} stroke-width={2.25} class="lucide-anim-hover-pop shrink-0" aria-hidden="true" />
+				</a>
+				<a
+					href="#contacto"
+					class="btn-ghost group inline-flex items-center justify-center gap-2 rounded-full border border-white/[0.14] bg-white/[0.04] px-7 py-3.5 text-sm font-semibold text-white transition hover:border-white/24 hover:bg-white/[0.07]"
+				>
+					<MessageCircle size={18} stroke-width={2} class="lucide-anim-hover-pop shrink-0" aria-hidden="true" />
+					Contactar
+				</a>
+			</div>
+		</div>
+	</div>
+</section>

@@ -1,0 +1,49 @@
+---
+import "../styles/global.css";
+import SeoHead from "../components/SeoHead.astro";
+import { site } from "../data/site";
+import type { SeoProps } from "../lib/seo";
+
+interface Props extends SeoProps {}
+
+const {
+	title = site.title,
+	description = site.description,
+	path = "/",
+	noindex = false,
+	ogImagePath,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={site.language}>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<link rel="icon" type="image/png" sizes="512x512" href={site.logoPath} />
+		<link rel="apple-touch-icon" href={site.logoPath} />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+		<title>{title}</title>
+		<SeoHead {title} {description} {path} {noindex} ogImagePath={ogImagePath} />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@400;500;600;700;800&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+	<body
+		class="min-h-dvh antialiased accent-brand-green selection:bg-brand-green/28 selection:text-white underline-offset-[0.22em]"
+	>
+		<a href="#contenido-principal" class="skip-link">Saltar al contenido</a>
+		<slot />
+		<script>
+			import "../scripts/scroll-reveal.ts";
+			import "../scripts/site-effects.ts";
+			import "../scripts/hero-spacetime-grid.ts";
+		</script>
+	</body>
+</html>

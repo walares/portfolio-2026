@@ -1,0 +1,27 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../data/site";
+import Navbar from "../components/Navbar.astro";
+import Hero from "../components/Hero.astro";
+import LogoMarquee from "../components/LogoMarquee.astro";
+import ServicesBento from "../components/ServicesBento.astro";
+import PortfolioSection from "../components/PortfolioSection.astro";
+import Contact from "../components/Contact.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout>
+	<Navbar />
+	<main id="contenido-principal" tabindex="-1">
+		<p class="sr-only">
+			{site.personName}, {site.legalName} ({site.name}): {site.description} Contacto: {site.email};
+			WhatsApp {site.phoneDisplay}.
+		</p>
+		<Hero />
+		<LogoMarquee />
+		<ServicesBento />
+		<PortfolioSection />
+		<Contact />
+	</main>
+	<Footer />
+</Layout>

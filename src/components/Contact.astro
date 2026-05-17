@@ -1,0 +1,207 @@
+---
+import {
+	Mail,
+	Send,
+	MessageCircle,
+	Smartphone,
+	CircleUserRound,
+	AtSign,
+	ShieldCheck,
+	MessageSquareMore,
+	Settings2,
+} from "@lucide/astro";
+
+import { site } from "../data/site";
+
+const formAction = import.meta.env.PUBLIC_FORMSPREE_ACTION as string | undefined;
+const formNext = formAction ? `${site.url}/?enviado=1#contacto` : undefined;
+
+const whatsappPrefill = encodeURIComponent(
+	`Hola ${site.personName.split(" ")[0]}, me gustaría hablar sobre un proyecto con ${site.name}.`,
+);
+const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
+---
+
+<section
+	id="contacto"
+	class="scroll-mt-24 px-4 pb-28 pt-10 sm:px-6 lg:px-8"
+	aria-labelledby="contacto-heading"
+>
+	<div class="mx-auto max-w-6xl">
+		<div class="cta-block reveal relative px-6 py-14 sm:px-10 sm:py-16 lg:px-14">
+			<div class="relative z-10 mx-auto max-w-2xl text-center">
+				<p class="eyebrow-pill mb-5 justify-center">Contacto</p>
+				<h2
+					id="contacto-heading"
+					class="headline-section text-3xl text-white sm:text-4xl lg:text-[2.75rem]"
+				>
+					Construyamos la web
+					<span class="mt-1 block text-brand-green">que necesitas.</span>
+				</h2>
+				<p class="text-muted-body mt-4 text-base sm:text-lg">
+					Cuéntanos sobre tu proyecto y te ofrecemos una asesoría inicial.
+				</p>
+				<div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+					<a
+						href={whatsappHref}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="btn-primary group inline-flex items-center gap-2 rounded-full bg-brand-green px-7 py-3.5 text-sm font-semibold text-brand-dark"
+					>
+						<MessageCircle size={18} stroke-width={2} class="lucide-anim-hover-pop shrink-0" aria-hidden="true" />
+						WhatsApp
+					</a>
+					<a
+						href={`mailto:${site.email}`}
+						class="btn-ghost inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/[0.04] px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-white/[0.07]"
+					>
+						<Mail size={18} stroke-width={2} aria-hidden="true" />
+						Correo
+					</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="reveal mx-auto mt-10 max-w-2xl">
+			<div
+				class="card-pomelo flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6"
+			>
+				<div class="flex items-start gap-3 sm:min-w-0 sm:flex-1">
+					<Smartphone size={24} stroke-width={1.85} class="mt-0.5 shrink-0 text-brand-gold" aria-hidden="true" />
+					<div class="min-w-0 text-left">
+						<p class="flex items-center gap-2 text-sm font-semibold text-white">
+							<MessageCircle size={17} stroke-width={2} class="text-brand-green" aria-hidden="true" />
+							WhatsApp · AE Webdes
+						</p>
+						<p class="text-muted-caption mt-1 text-xs">Alejandro Arango Web Design</p>
+						<p class="mt-2 flex items-center gap-2 font-mono text-sm tabular-nums text-white/82">
+							<AtSign size={15} stroke-width={2} class="text-brand-green/85" aria-hidden="true" />
+							{site.phoneDisplay}
+						</p>
+					</div>
+				</div>
+				<a
+					href={whatsappHref}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-brand-green/35 bg-brand-green/12 px-5 py-3 text-sm font-semibold text-brand-green transition hover:bg-brand-green/22"
+				>
+					Abrir chat
+				</a>
+			</div>
+
+			{
+				formAction ? (
+					<>
+					<p
+						id="contacto-enviado"
+						class="card-pomelo mt-6 hidden border border-brand-green/35 bg-brand-green/10 p-4 text-center text-sm text-brand-green"
+						role="status"
+					>
+						Mensaje enviado. Te responderemos pronto.
+					</p>
+					<form
+						action={formAction}
+						method="POST"
+						class="card-pomelo mt-6 space-y-5 p-6 sm:p-8"
+					>
+						<input type="hidden" name="_subject" value={`Nuevo mensaje — ${site.name}`} />
+						{formNext && <input type="hidden" name="_next" value={formNext} />}
+						<input
+							type="text"
+							name="_gotcha"
+							tabindex="-1"
+							autocomplete="off"
+							class="sr-only"
+							aria-hidden="true"
+						/>
+						<div>
+							<label for="nombre" class="flex items-center gap-2 text-sm font-medium text-white/88">
+								<CircleUserRound size={16} stroke-width={2} class="text-brand-green" aria-hidden="true" />
+								Nombre
+							</label>
+							<input
+								id="nombre"
+								name="name"
+								type="text"
+								required
+								autocomplete="name"
+								class="mt-2 w-full rounded-xl border border-white/[0.11] bg-brand-dark/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-brand-gray focus:border-brand-green/45 focus:ring-2 focus:ring-brand-green/40"
+								placeholder="Tu nombre"
+							/>
+						</div>
+						<div>
+							<label for="email" class="flex items-center gap-2 text-sm font-medium text-white/88">
+								<Mail size={16} stroke-width={2} class="text-brand-gold/90" aria-hidden="true" />
+								Correo electrónico
+							</label>
+							<input
+								id="email"
+								name="email"
+								type="email"
+								required
+								autocomplete="email"
+								class="mt-2 w-full rounded-xl border border-white/[0.11] bg-brand-dark/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-brand-gray focus:border-brand-green/45 focus:ring-2 focus:ring-brand-green/40"
+								placeholder="correo@empresa.com"
+							/>
+						</div>
+						<div>
+							<label for="mensaje" class="flex items-center gap-2 text-sm font-medium text-white/88">
+								<MessageSquareMore size={16} stroke-width={2} class="text-brand-green" aria-hidden="true" />
+								Mensaje
+							</label>
+							<textarea
+								id="mensaje"
+								name="message"
+								rows={5}
+								required
+								class="mt-2 w-full resize-y rounded-xl border border-white/[0.11] bg-brand-dark/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-brand-gray focus:border-brand-green/45 focus:ring-2 focus:ring-brand-green/40"
+								placeholder="¿En qué podemos ayudarte?"
+							/>
+						</div>
+						<button
+							type="submit"
+							class="btn-primary group flex w-full items-center justify-center gap-2 rounded-full bg-brand-green py-3 text-sm font-semibold text-brand-dark"
+						>
+							<Send size={18} stroke-width={2} class="lucide-anim-hover-pop shrink-0" aria-hidden="true" />
+							Enviar mensaje
+						</button>
+						<p class="text-eyebrow-brand flex flex-wrap items-center justify-center gap-2 text-center text-xs">
+							<ShieldCheck size={14} stroke-width={2} class="text-brand-green" aria-hidden="true" />
+							<span>
+								Envío con{" "}
+								<a
+									href="https://formspree.io"
+									class="underline decoration-white/28 hover:text-white"
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									Formspree
+								</a>
+							</span>
+						</p>
+					</form>
+					<script>
+						const params = new URLSearchParams(window.location.search);
+						if (params.get("enviado") === "1") {
+							document.getElementById("contacto-enviado")?.classList.remove("hidden");
+							document.getElementById("contacto")?.scrollIntoView({ behavior: "smooth", block: "start" });
+						}
+					</script>
+					</>
+				) : (
+					<div class="card-pomelo mt-6 p-6 text-center sm:p-8">
+						<Settings2 size={34} stroke-width={1.5} class="mx-auto text-brand-green/85" aria-hidden="true" />
+						<p class="text-muted-body mt-4 text-sm">
+							Activa Formspree y añade{" "}
+							<code class="rounded bg-white/10 px-1.5 py-0.5 text-xs text-brand-gold">
+								PUBLIC_FORMSPREE_ACTION
+							</code>{" "}
+							en <code class="rounded bg-white/10 px-1.5 py-0.5 text-xs">.env</code>
+						</p>
+					</div>
+				)
+			}
+		</div>
+	</div>
+</section>

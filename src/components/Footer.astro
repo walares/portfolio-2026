@@ -1,0 +1,57 @@
+---
+import { ArrowUp } from "@lucide/astro";
+import BrandLogo from "./BrandLogo.astro";
+import { site } from "../data/site";
+
+const footerLinks = [
+	{ href: "#servicios", label: "Servicios" },
+	{ href: "#work", label: "Proyectos" },
+	{ href: "#contacto", label: "Contacto" },
+] as const;
+---
+
+<footer class="border-t border-white/[0.06] px-4 py-12 sm:px-6 lg:px-8">
+	<div class="reveal mx-auto max-w-6xl">
+		<div class="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
+			<div>
+				<a
+					href="#inicio"
+					class="inline-flex rounded-lg outline-none ring-brand-green/50 transition hover:opacity-90 focus-visible:ring-2"
+					aria-label={`${site.name} — inicio`}
+				>
+					<BrandLogo size="footer" showWordmark />
+				</a>
+				<p class="text-muted-caption mt-3 max-w-xs text-sm">
+					Diseño y desarrollo web — Lima, Perú y trabajo remoto.
+				</p>
+			</div>
+			<nav aria-label="Pie de página">
+				<ul class="flex flex-wrap gap-x-6 gap-y-2">
+					{
+						footerLinks.map(({ href, label }) => (
+							<li>
+								<a
+									href={href}
+									class="text-sm font-medium text-white/65 transition hover:text-brand-green"
+								>
+									{label}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</nav>
+			<a
+				href="#inicio"
+				class="inline-flex items-center gap-2 text-sm font-semibold text-brand-green transition hover:text-brand-gold"
+			>
+				Volver arriba
+				<ArrowUp size={16} stroke-width={2} class="lucide-anim-nudge shrink-0" aria-hidden="true" />
+			</a>
+		</div>
+		<div class="section-divider mt-10 mb-6" aria-hidden="true" />
+		<p class="text-muted-caption text-center text-xs sm:text-left">
+			© {new Date().getFullYear()} Alejandro Arango · Astro + Tailwind
+		</p>
+	</div>
+</footer>
