@@ -68,4 +68,18 @@ export const portfolioProjects: PortfolioProject[] = [
 			line: "bg-brand-green",
 		},
 	},
+	{
+		id: "aa05",
+		title: "Sellex Auto",
+		year: "2026",
+		url: "https://sellexauto.com/",
+		description:
+			"Importadora de autos premium en Perú: catálogo en línea, pedidos por importación y acompañamiento de cotización a entrega.",
+		tags: ["Automotriz", "Catálogo"],
+		accent: {
+			glow: "from-rose-500/20 via-transparent to-transparent",
+			pill: "bg-rose-500/15 text-rose-200",
+			line: "bg-rose-400",
+		},
+	},
 ];
