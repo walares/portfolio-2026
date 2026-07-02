@@ -1,897 +1,302 @@
 ---
-import { ExternalLink, MousePointer2 } from "@lucide/astro";
+import { ArrowUpRight, FolderOpen } from "@lucide/astro";
 import { portfolioProjects as projects } from "../data/portfolio";
 import { siteScreenshotUrl } from "../lib/siteScreenshot";
-
-const scrollHeightVh = 88 + projects.length * 72;
 ---
 
 <section
 	id="work"
-	class="work-scroll relative scroll-mt-20"
+	class="relative scroll-mt-24 overflow-hidden px-4 py-20 sm:px-6 sm:py-28 lg:px-8"
 	aria-labelledby="work-heading"
-	data-work-scroll
-	style={`--work-scroll-height: ${scrollHeightVh}vh`}
 >
-	<div class="work-scroll__spacer" aria-hidden="false">
-		<div class="work-scroll__stage" data-work-stage>
-			<!-- Pasillo / marco de puerta -->
-			<div class="work-door" data-work-door aria-hidden="false">
-				<div class="work-door__jamb work-door__jamb--left" aria-hidden="true"></div>
-				<div class="work-door__jamb work-door__jamb--right" aria-hidden="true"></div>
-				<div class="work-door__panel work-door__panel--left" aria-hidden="true"></div>
-				<div class="work-door__panel work-door__panel--right" aria-hidden="true"></div>
-				<div class="work-door__lintel" aria-hidden="true"></div>
-				<div class="work-door__threshold" aria-hidden="true"></div>
-				<div class="work-door__title-wrap">
-					<p class="work-door__eyebrow">Portfolio</p>
-					<h2 id="work-heading" class="work-door__title font-display">
-						<span class="work-door__title-letter">P</span>
-						<span class="work-door__title-letter">R</span>
-						<span class="work-door__title-letter">O</span>
-						<span class="work-door__title-letter">Y</span>
-						<span class="work-door__title-letter">E</span>
-						<span class="work-door__title-letter">C</span>
-						<span class="work-door__title-letter">T</span>
-						<span class="work-door__title-letter">O</span>
-						<span class="work-door__title-letter">S</span>
+	<div
+		class="graphic-orb graphic-orb--green left-0 top-1/4 size-[min(22rem,55vw)] -translate-y-1/2 opacity-25"
+		data-parallax="0.05"
+		aria-hidden="true"
+	/>
+	<div class="mx-auto max-w-6xl">
+		<header class="featured-work__header reveal">
+			<div class="featured-work__header-row">
+				<div>
+					<p class="eyebrow-pill mb-5">
+						<FolderOpen size={14} stroke-width={2} class="text-brand-green" aria-hidden="true" />
+						Portfolio
+					</p>
+					<h2
+						id="work-heading"
+						class="headline-section text-pretty text-3xl text-white sm:text-4xl lg:text-[2.85rem]"
+					>
+						Proyectos
+						<span class="headline-muted"> destacados</span>
 					</h2>
-					<p class="work-door__hint">Sigue bajando para entrar</p>
 				</div>
+				<p class="featured-work__count text-eyebrow-brand">
+					{String(projects.length).padStart(2, "0")} sitios · 2022 — 2026
+				</p>
 			</div>
+			<p class="text-muted-body mt-5 max-w-2xl text-base sm:text-lg">
+				Selección de webs en producción. Haz clic en cualquier proyecto para verlo en vivo.
+			</p>
+		</header>
 
-			<!-- Catálogo interior -->
-			<div class="work-catalog">
-				<header class="work-catalog__header">
-					<div class="work-catalog__header-top">
-						<p class="work-catalog__meta">
-							<span data-work-counter>01</span>
-							<span class="text-white/35">/</span>
-							<span>{String(projects.length).padStart(2, "0")}</span>
-						</p>
-						<p class="work-catalog__range text-eyebrow-brand">2022 — 2026 · En producción</p>
-					</div>
-					<nav class="work-catalog__nav" data-work-nav aria-label="Elegir proyecto">
-						{
-							projects.map((p, index) => (
-								<button
-									type="button"
-									class="work-catalog__nav-btn"
-									data-work-jump={index}
-									aria-label={`Proyecto ${index + 1}: ${p.title}`}
-									aria-current={index === 0 ? "true" : "false"}
-								>
-									<span class="work-catalog__nav-num">{String(index + 1).padStart(2, "0")}</span>
-									<span class="work-catalog__nav-title">{p.title}</span>
-								</button>
-							))
-						}
-					</nav>
-				</header>
-
-				<ol class="work-catalog__list" aria-label="Proyectos publicados">
-					{
-						projects.map((p, index) => (
-							<li class="work-catalog__item" data-work-item style={`--item-index: ${index}`}>
-								<article class="work-card group">
-									<div
-										class:list={[
-											"work-card__glow pointer-events-none absolute inset-0 bg-gradient-to-br opacity-70",
-											p.accent.glow,
-										]}
-										aria-hidden="true"
+		<ul class="featured-work__grid reveal-stagger mt-12 lg:mt-14" aria-label="Proyectos publicados">
+			{
+				projects.map((p) => (
+					<li>
+						<a
+							href={p.url}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="featured-work__card group"
+						>
+							<div class="featured-work__media">
+								<div
+									class:list={[
+										"featured-work__glow pointer-events-none absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-100",
+										p.accent.glow,
+									]}
+									aria-hidden="true"
+								/>
+								{p.scrollGif ? (
+									<img
+										src={p.scrollGif}
+										alt=""
+										class="featured-work__img h-full w-full object-cover object-top"
+										loading="lazy"
+										decoding="async"
 									/>
-									<div class:list={["work-card__accent", p.accent.line]} aria-hidden="true" />
-
-									<div class="work-card__layout">
-										<div class="work-card__index font-display tabular-nums">
-											{String(index + 1).padStart(2, "0")}
-											<span class="work-card__id">#{p.id}</span>
-										</div>
-
-										<div class="work-card__preview">
-											<a
-												href={p.url}
-												target="_blank"
-												rel="noopener noreferrer"
-												class="work-card__preview-link"
-											>
-												<div class="work-card__preview-chrome" aria-hidden="true">
-													<span>Vista previa</span>
-													<span class="inline-flex items-center gap-1">
-														<MousePointer2 size={11} stroke-width={2} aria-hidden="true" />
-														Scroll
-													</span>
-												</div>
-												<div class="work-card__preview-media">
-													{p.scrollGif ? (
-														<img
-															src={p.scrollGif}
-															alt={`Vista previa de ${p.title}`}
-															class="h-full w-full object-cover object-top"
-															loading="lazy"
-															decoding="async"
-														/>
-													) : p.previewLocal ? (
-														<img
-															src={p.previewLocal}
-															alt={`Vista previa de ${p.title}`}
-															class="portfolio-preview-pan max-h-none w-full"
-															loading="lazy"
-															decoding="async"
-															width="1200"
-															height="750"
-														/>
-													) : (
-														<img
-															src={siteScreenshotUrl(p.url)}
-															alt={`Vista previa de ${p.title}`}
-															class="portfolio-preview-pan max-h-none w-full"
-															loading="lazy"
-															decoding="async"
-															width="1200"
-															height="750"
-														/>
-													)}
-												</div>
-											</a>
-										</div>
-
-										<div class="work-card__body">
-											<div class="work-card__tags">
-												<span
-													class:list={[
-														"rounded-full px-2.5 py-1 text-xs font-semibold",
-														p.accent.pill,
-													]}
-												>
-													{p.year}
-												</span>
-												{p.tags.map((t) => (
-													<span class="rounded-md border border-white/10 px-2 py-0.5 text-[11px] text-white/55">
-														{t}
-													</span>
-												))}
-											</div>
-											<h3 class="work-card__title font-display">{p.title}</h3>
-											<p class="work-card__desc text-muted-body">{p.description}</p>
-											<a
-												href={p.url}
-												target="_blank"
-												rel="noopener noreferrer"
-												class="work-card__link"
-											>
-												Visitar sitio
-												<ExternalLink size={15} stroke-width={2} aria-hidden="true" />
-											</a>
-										</div>
-									</div>
-								</article>
-							</li>
-						))
-					}
-				</ol>
-			</div>
-		</div>
+								) : p.previewLocal ? (
+									<img
+										src={p.previewLocal}
+										alt=""
+										class="featured-work__img portfolio-preview-pan max-h-none w-full"
+										loading="lazy"
+										decoding="async"
+										width="1200"
+										height="750"
+									/>
+								) : (
+									<img
+										src={siteScreenshotUrl(p.url)}
+										alt=""
+										class="featured-work__img portfolio-preview-pan max-h-none w-full"
+										loading="lazy"
+										decoding="async"
+										width="1200"
+										height="750"
+									/>
+								)}
+								<span class="featured-work__visit" aria-hidden="true">
+									<ArrowUpRight size={18} stroke-width={2} />
+								</span>
+							</div>
+							<div class="featured-work__body">
+								<h3 class="featured-work__title font-display">{p.title}</h3>
+								<div class="featured-work__meta">
+									<span
+										class:list={[
+											"rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
+											p.accent.pill,
+										]}
+									>
+										{p.year}
+									</span>
+									{p.tags.slice(0, 2).map((t) => (
+										<span class="text-[11px] font-medium text-white/45">{t}</span>
+									))}
+								</div>
+							</div>
+						</a>
+					</li>
+				))
+			}
+		</ul>
 	</div>
 </section>
 
-<script>
-	import "../scripts/work-scroll.ts";
-</script>
-
 <style>
-	.work-scroll {
-		--door-progress: 0;
-		--work-progress: 0;
-		--work-ease: cubic-bezier(0.16, 1, 0.3, 1);
-		--work-door-inset: clamp(1.25rem, 4vw, 2.75rem);
-		--work-door-lintel: clamp(2.5rem, 8vh, 4.5rem);
-		--work-door-threshold: clamp(1.5rem, 4vh, 2.5rem);
-		position: relative;
-		isolation: isolate;
-	}
-
-	.work-scroll__spacer {
-		height: var(--work-scroll-height, 380vh);
-	}
-
-	.work-scroll__stage {
-		position: sticky;
-		top: 0;
-		height: 100dvh;
-		min-height: 32rem;
-		overflow: hidden;
-		background: var(--color-brand-dark);
-	}
-
-	/* —— Puerta —— */
-	.work-door {
-		position: absolute;
-		inset: 0;
-		z-index: 30;
-		display: grid;
-		place-items: center;
-		pointer-events: none;
-		perspective: 1400px;
-	}
-
-	.work-door__jamb {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		width: var(--work-door-inset);
-		background: linear-gradient(180deg, rgb(22 26 28) 0%, rgb(10 11 12) 100%);
-		border: 1px solid rgb(255 255 255 / 0.08);
-		z-index: 2;
-	}
-
-	.work-door__jamb--left {
-		left: 0;
-		border-right-color: rgb(99 185 149 / 0.2);
-		box-shadow: inset -8px 0 24px rgb(99 185 149 / 0.06);
-	}
-
-	.work-door__jamb--right {
-		right: 0;
-		border-left-color: rgb(99 185 149 / 0.2);
-		box-shadow: inset 8px 0 24px rgb(99 185 149 / 0.06);
-	}
-
-	.work-door__lintel {
-		position: absolute;
-		top: 0;
-		left: var(--work-door-inset);
-		right: var(--work-door-inset);
-		height: var(--work-door-lintel);
-		background: linear-gradient(180deg, rgb(18 21 23) 0%, rgb(12 13 14) 100%);
-		border-bottom: 1px solid rgb(99 185 149 / 0.25);
-		z-index: 3;
-		transform: translateY(calc((1 - var(--door-progress)) * -8%));
-		opacity: calc(1 - var(--door-progress) * 0.85);
-	}
-
-	.work-door__threshold {
-		position: absolute;
-		bottom: 0;
-		left: var(--work-door-inset);
-		right: var(--work-door-inset);
-		height: var(--work-door-threshold);
-		background: linear-gradient(0deg, rgb(8 9 10) 0%, rgb(14 16 18) 100%);
-		border-top: 1px solid rgb(224 159 62 / 0.2);
-		z-index: 3;
-	}
-
-	.work-door__panel {
-		position: absolute;
-		top: var(--work-door-lintel);
-		bottom: var(--work-door-threshold);
-		width: calc(50% - var(--work-door-inset));
-		background:
-			linear-gradient(135deg, rgb(20 24 26 / 0.98) 0%, rgb(8 9 10 / 0.99) 100%),
-			repeating-linear-gradient(
-				90deg,
-				rgb(255 255 255 / 0.02) 0,
-				rgb(255 255 255 / 0.02) 1px,
-				transparent 1px,
-				transparent 24px
-			);
-		border: 1px solid rgb(255 255 255 / 0.06);
-		z-index: 4;
-		backface-visibility: hidden;
-		transform-style: preserve-3d;
-		box-shadow: 0 0 80px rgb(0 0 0 / 0.55);
-		transition: box-shadow 0.4s ease;
-	}
-
-	.work-door__panel--left {
-		left: var(--work-door-inset);
-		transform-origin: left center;
-		transform: perspective(1200px) rotateY(calc(var(--door-progress) * -88deg));
-		border-right-color: rgb(99 185 149 / 0.35);
-	}
-
-	.work-door__panel--right {
-		right: var(--work-door-inset);
-		transform-origin: right center;
-		transform: perspective(1200px) rotateY(calc(var(--door-progress) * 88deg));
-		border-left-color: rgb(99 185 149 / 0.35);
-	}
-
-	.work-scroll.is-door-open .work-door__panel {
-		box-shadow: 0 0 120px rgb(99 185 149 / 0.12);
-	}
-
-	.work-door__title-wrap {
-		position: relative;
-		z-index: 5;
-		text-align: center;
-		padding: 2rem;
-		padding-inline: calc(var(--work-door-inset) + 1rem);
-		transform: scale(calc(1 - var(--door-progress) * 0.12))
-			translateY(calc(var(--door-progress) * -18%));
-		opacity: calc(1 - var(--door-progress) * 1.1);
-	}
-
-	/* Marco fijo: se desvanece al abrir para no tapar el catálogo */
-	.work-door__jamb,
-	.work-door__lintel,
-	.work-door__threshold {
-		transition: opacity 0.35s var(--work-ease);
-		opacity: calc(1 - clamp((var(--door-progress) - 0.12) / 0.42, 0, 1));
-	}
-
-	.work-scroll.is-door-open .work-door__jamb,
-	.work-scroll.is-door-open .work-door__lintel,
-	.work-scroll.is-door-open .work-door__threshold {
-		visibility: hidden;
-	}
-
-	.work-door__eyebrow {
-		font-size: 0.6875rem;
-		font-weight: 600;
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
-		color: rgb(255 255 255 / 0.45);
-	}
-
-	.work-door__title {
-		margin-top: 0.75rem;
-		font-size: clamp(2.25rem, 9vw, 6rem);
-		font-weight: 600;
-		letter-spacing: 0.12em;
-		line-height: 1;
-		color: white;
-		display: flex;
-		justify-content: center;
-		gap: 0.08em;
-	}
-
-	.work-door__title-letter {
-		display: inline-block;
-		transform: translateY(calc(sin(var(--item-index, 0)) * 0px));
-		text-shadow: 0 0 40px rgb(99 185 149 / 0.35);
-	}
-
-	.work-door__hint {
-		margin-top: 1.25rem;
-		font-size: 0.8125rem;
-		color: rgb(255 255 255 / 0.42);
-		animation: work-hint-pulse 2.4s ease-in-out infinite;
-	}
-
-	@keyframes work-hint-pulse {
-		0%,
-		100% {
-			opacity: 0.45;
-		}
-		50% {
-			opacity: 0.9;
-		}
-	}
-
-	/* —— Catálogo —— */
-	.work-catalog {
-		position: absolute;
-		inset: 0;
-		z-index: 40;
-		display: flex;
-		flex-direction: column;
-		width: 100%;
-		max-width: 100%;
-		box-sizing: border-box;
-		overflow-x: clip;
-		padding-inline: calc(var(--work-door-inset) + 0.75rem);
-		padding-top: max(
-			calc(var(--work-door-lintel) + clamp(0.75rem, 2.5vh, 1.5rem)),
-			env(safe-area-inset-top, 0px)
-		);
-		padding-bottom: calc(var(--work-door-threshold) + clamp(1rem, 3vh, 2rem));
-		opacity: calc(clamp((var(--door-progress) - 0.35) / 0.45, 0, 1));
-		transform: scale(calc(0.94 + var(--door-progress) * 0.06));
-		transform-origin: top center;
-		pointer-events: none;
-	}
-
-	.work-catalog:has(.work-catalog__item.is-active) .work-catalog__list {
-		pointer-events: auto;
-	}
-
-	.work-catalog__header {
-		display: flex;
-		flex-direction: column;
-		align-items: stretch;
-		gap: 0.65rem;
-		width: 100%;
-		min-width: 0;
-		max-width: 100%;
-		margin-bottom: clamp(0.5rem, 1.5vh, 1rem);
-		flex-shrink: 0;
-		pointer-events: auto;
-	}
-
-	.work-catalog__header-top {
+	.featured-work__header-row {
 		display: flex;
 		flex-wrap: wrap;
-		align-items: baseline;
+		align-items: flex-end;
 		justify-content: space-between;
-		gap: 0.5rem 1rem;
-		width: 100%;
-		min-width: 0;
+		gap: 1rem 2rem;
 	}
 
-	.work-catalog__nav {
-		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-		gap: 0.4rem;
-		width: 100%;
-	}
-
-	.work-catalog__nav-btn {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.15rem;
-		min-width: 0;
-		padding: 0.45rem 0.55rem;
-		border-radius: 0.55rem;
-		border: 1px solid rgb(255 255 255 / 0.1);
-		background: rgb(255 255 255 / 0.03);
-		color: rgb(255 255 255 / 0.55);
-		text-align: left;
-		cursor: pointer;
-		transition:
-			border-color 0.25s ease,
-			background 0.25s ease,
-			color 0.25s ease,
-			box-shadow 0.25s ease;
-	}
-
-	.work-catalog__nav-btn:hover {
-		border-color: rgb(99 185 149 / 0.35);
-		color: rgb(255 255 255 / 0.88);
-		background: rgb(99 185 149 / 0.08);
-	}
-
-	.work-catalog__nav-btn:focus-visible {
-		outline: 2px solid var(--color-brand-green);
-		outline-offset: 2px;
-	}
-
-	.work-catalog__nav-btn.is-active,
-	.work-catalog__nav-btn[aria-current="true"] {
-		border-color: rgb(99 185 149 / 0.55);
-		background: rgb(99 185 149 / 0.14);
-		color: white;
-		box-shadow: 0 0 24px rgb(99 185 149 / 0.12);
-	}
-
-	.work-catalog__nav-num {
-		font-family: var(--font-display);
-		font-size: 0.8125rem;
+	.featured-work__count {
+		flex-shrink: 0;
+		font-size: 0.6875rem;
 		font-weight: 600;
-		font-variant-numeric: tabular-nums;
-		letter-spacing: 0.04em;
-		line-height: 1;
-	}
-
-	.work-catalog__nav-title {
-		display: none;
-		font-family: var(--font-sans);
-		font-size: 0.5625rem;
-		font-weight: 500;
-		line-height: 1.2;
-		letter-spacing: 0.02em;
-		color: rgb(255 255 255 / 0.65);
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		width: 100%;
-	}
-
-	.work-catalog__nav-btn.is-active .work-catalog__nav-title,
-	.work-catalog__nav-btn[aria-current="true"] .work-catalog__nav-title {
-		color: rgb(255 255 255 / 0.82);
-	}
-
-	@media (min-width: 640px) {
-		.work-catalog__nav {
-			gap: 0.5rem;
-		}
-
-		.work-catalog__nav-btn {
-			padding: 0.5rem 0.65rem;
-		}
-
-		.work-catalog__nav-title {
-			display: block;
-		}
-	}
-
-	@media (max-width: 420px) {
-		.work-catalog__header-top {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 0.35rem;
-		}
-	}
-
-	/* Móvil: meta arriba, proyecto al centro, selector abajo (sin solaparse) */
-	@media (max-width: 767px) {
-		.work-catalog {
-			display: grid;
-			grid-template-rows: auto minmax(0, 1fr) auto;
-			gap: 0;
-		}
-
-		.work-catalog__header {
-			display: contents;
-			margin-bottom: 0;
-		}
-
-		.work-catalog__header-top {
-			grid-row: 1;
-			margin-bottom: 0.35rem;
-			padding-bottom: 0.35rem;
-			border-bottom: 1px solid rgb(255 255 255 / 0.06);
-			pointer-events: auto;
-		}
-
-		.work-catalog__nav {
-			grid-row: 3;
-			margin-top: 0.5rem;
-			padding-top: 0.55rem;
-			border-top: 1px solid rgb(255 255 255 / 0.1);
-			background: linear-gradient(
-				0deg,
-				var(--color-brand-dark) 55%,
-				rgb(10 11 12 / 0.92) 100%
-			);
-			pointer-events: auto;
-		}
-
-		.work-catalog__nav-btn {
-			align-items: center;
-			padding: 0.55rem 0.35rem;
-		}
-
-		.work-catalog__list {
-			grid-row: 2;
-			min-height: 0;
-			overflow: hidden;
-		}
-
-		.work-catalog__item {
-			align-items: flex-start;
-			padding-top: 0.15rem;
-		}
-
-		.work-catalog__item .work-card {
-			max-height: 100%;
-		}
-	}
-
-	.work-catalog__meta {
-		font-family: var(--font-display);
-		font-size: clamp(1.25rem, 3.5vw, 2rem);
-		font-weight: 500;
-		letter-spacing: -0.03em;
-		color: white;
-		flex: 0 0 auto;
-		max-width: 100%;
-	}
-
-	.work-catalog__range {
-		flex: 1 1 10rem;
-		min-width: 0;
-		max-width: 100%;
-		margin-left: auto;
-		font-size: clamp(0.625rem, 2.8vw, 0.75rem);
-		font-weight: 600;
-		letter-spacing: 0.08em;
+		letter-spacing: 0.14em;
 		text-transform: uppercase;
 		text-align: right;
-		text-wrap: balance;
-		overflow-wrap: anywhere;
-		line-height: 1.35;
+		line-height: 1.4;
 	}
 
-	@media (max-width: 420px) {
-		.work-catalog__range {
-			margin-left: 0;
+	@media (max-width: 639px) {
+		.featured-work__count {
 			text-align: left;
-			letter-spacing: 0.06em;
 		}
 	}
 
-	@media (max-height: 640px) {
-		.work-catalog {
-			padding-top: max(
-				calc(var(--work-door-lintel) + 0.5rem),
-				env(safe-area-inset-top, 0px)
-			);
-			padding-bottom: calc(var(--work-door-threshold) + 0.75rem);
-		}
-
-		.work-catalog__meta {
-			font-size: 1.15rem;
-		}
-
-		.work-card__preview-media {
-			min-height: min(28vh, 11rem);
-			max-height: min(36vh, 16rem);
-		}
-	}
-
-	.work-catalog__list {
+	.featured-work__grid {
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		flex: 1;
-		position: relative;
-		min-height: 0;
+		display: grid;
+		gap: clamp(1.25rem, 3vw, 2rem);
 	}
 
-	.work-catalog__item {
-		--item-progress: 0;
+	@media (min-width: 768px) {
+		.featured-work__grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	.featured-work__card {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		text-decoration: none;
+		color: inherit;
+		border-radius: var(--radius-card);
+		outline-offset: 4px;
+	}
+
+	.featured-work__card:focus-visible {
+		outline: 2px solid var(--color-brand-green);
+	}
+
+	.featured-work__media {
+		position: relative;
+		overflow: hidden;
+		border-radius: calc(var(--radius-card) - 0.15rem);
+		border: 1px solid var(--color-surface-border);
+		background: var(--color-surface-2);
+		aspect-ratio: 16 / 10;
+		box-shadow:
+			inset 0 1px 0 rgb(255 255 255 / 0.06),
+			0 24px 64px -32px rgb(0 0 0 / 0.65);
+		transition:
+			border-color 0.45s var(--ease-spring),
+			box-shadow 0.55s var(--ease-spring),
+			transform 0.55s var(--ease-spring);
+	}
+
+	.featured-work__card:hover .featured-work__media,
+	.featured-work__card:focus-visible .featured-work__media {
+		border-color: rgb(255 255 255 / 0.14);
+		box-shadow:
+			inset 0 1px 0 rgb(255 255 255 / 0.08),
+			var(--shadow-glow-green),
+			0 32px 80px -36px rgb(0 0 0 / 0.75);
+		transform: translateY(-3px);
+	}
+
+	.featured-work__img {
+		transition: transform 0.7s var(--ease-spring);
+	}
+
+	.featured-work__card:hover .featured-work__img,
+	.featured-work__card:focus-visible .featured-work__img {
+		transform: scale(1.03);
+	}
+
+	.featured-work__media:has(.portfolio-preview-pan) {
+		aspect-ratio: auto;
+		max-height: clamp(14rem, 42vw, 22rem);
+	}
+
+	.featured-work__media:has(.portfolio-preview-pan) .featured-work__img {
+		display: block;
+		width: 100%;
+		height: auto;
+		transform: none;
+	}
+
+	.featured-work__visit {
 		position: absolute;
-		inset: 0;
+		right: 0.85rem;
+		top: 0.85rem;
 		display: flex;
 		align-items: center;
-		opacity: var(--item-progress);
-		transform: translate3d(0, calc((1 - var(--item-progress)) * 1rem), 0)
-			scale(calc(0.985 + var(--item-progress) * 0.015));
-		pointer-events: none;
-		z-index: calc(var(--item-index, 0) + 1);
-	}
-
-	.work-scroll.is-nav-jumping .work-catalog__item {
-		transition:
-			opacity 0.28s var(--work-ease),
-			transform 0.28s var(--work-ease);
-	}
-
-	.work-catalog__item .work-card {
-		width: 100%;
-		max-width: min(72rem, 100%);
-		max-height: calc(
-			100dvh - var(--work-door-lintel) - var(--work-door-threshold) -
-				clamp(4.5rem, 12vh, 6.5rem)
-		);
-		margin-inline: auto;
-	}
-
-	.work-catalog__item.is-active {
-		pointer-events: auto;
-	}
-
-	.work-card {
-		position: relative;
-		overflow: hidden;
-		border-radius: clamp(1rem, 2vw, 1.35rem);
-		border: 1px solid rgb(255 255 255 / 0.1);
-		background: rgb(255 255 255 / 0.04);
-		box-shadow: 0 24px 80px rgb(0 0 0 / 0.35);
-	}
-
-	.work-card__accent {
-		position: absolute;
-		left: 0;
-		top: 0;
-		bottom: 0;
-		width: 3px;
-		opacity: calc(0.35 + var(--item-progress) * 0.65);
-	}
-
-	.work-card__layout {
-		display: grid;
-		grid-template-columns: minmax(0, auto) minmax(0, 1fr);
-		grid-template-rows: auto auto;
-		gap: 0.85rem 1rem;
-		padding: clamp(1rem, 2.5vw, 1.35rem);
-		min-width: 0;
-		height: 100%;
-		max-height: inherit;
-	}
-
-	@media (min-width: 768px) {
-		.work-card__layout {
-			grid-template-columns: minmax(0, 5rem) minmax(0, 1.35fr) minmax(0, 1fr);
-			grid-template-rows: 1fr;
-			align-items: stretch;
-			gap: clamp(1rem, 2vw, 1.5rem);
-			padding: clamp(1.1rem, 2vw, 1.5rem) clamp(1.15rem, 2.5vw, 1.65rem);
-		}
-	}
-
-	.work-card__index {
-		font-size: clamp(1.25rem, 3.5vw, 1.65rem);
-		font-weight: 500;
-		color: rgb(255 255 255 / 0.88);
-		line-height: 1.1;
-		display: flex;
-		flex-direction: column;
-		gap: 0.2rem;
-		min-width: 0;
-		max-width: 100%;
-		overflow-wrap: anywhere;
-	}
-
-	.work-card__id {
-		font-family: var(--font-sans);
-		font-size: 0.6875rem;
-		font-weight: 600;
-		letter-spacing: 0.08em;
-		color: rgb(255 255 255 / 0.38);
-		overflow-wrap: anywhere;
-	}
-
-	.work-card__preview {
-		grid-column: 1 / -1;
-	}
-
-	@media (min-width: 768px) {
-		.work-card__preview {
-			grid-column: 2;
-			grid-row: 1;
-		}
-	}
-
-	.work-card__preview-link {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		min-height: 0;
-		border-radius: 0.75rem;
-		overflow: hidden;
-		border: 1px solid rgb(255 255 255 / 0.1);
-	}
-
-	.work-card__preview-chrome {
-		display: flex;
-		justify-content: space-between;
-		gap: 0.5rem;
-		padding: 0.45rem 0.75rem;
-		font-size: 0.625rem;
-		font-weight: 600;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		color: rgb(255 255 255 / 0.6);
-		background: rgb(0 0 0 / 0.5);
-		border-bottom: 1px solid rgb(255 255 255 / 0.08);
-	}
-
-	.work-card__preview {
-		min-height: 0;
-	}
-
-	.work-card__preview-media {
-		position: relative;
-		flex: 1;
-		width: 100%;
-		aspect-ratio: 16 / 10;
-		min-height: min(34vh, 15rem);
-		max-height: min(44vh, 22rem);
-		overflow: hidden;
-		background: rgb(0 0 0 / 0.45);
-	}
-
-	@media (min-width: 768px) {
-		.work-card__preview {
-			display: flex;
-			flex-direction: column;
-			min-height: 0;
-		}
-
-		.work-card__preview-media {
-			min-height: min(38vh, 16rem);
-			max-height: min(52vh, 26rem);
-			height: 100%;
-		}
-	}
-
-	@media (min-width: 1024px) {
-		.work-card__preview-media {
-			min-height: min(42vh, 18rem);
-			max-height: min(58vh, 30rem);
-		}
-	}
-
-	.work-card__body {
-		grid-column: 1 / -1;
-		display: flex;
-		flex-direction: column;
 		justify-content: center;
-		min-width: 0;
+		width: 2.25rem;
+		height: 2.25rem;
+		border-radius: 9999px;
+		border: 1px solid rgb(255 255 255 / 0.12);
+		background: rgb(10 11 12 / 0.72);
+		color: white;
+		opacity: 0;
+		transform: translateY(4px);
+		transition:
+			opacity 0.35s ease,
+			transform 0.35s var(--ease-spring),
+			background 0.25s ease,
+			color 0.25s ease;
+		backdrop-filter: blur(8px);
 	}
 
-	@media (min-width: 768px) {
-		.work-card__body {
-			grid-column: 3;
-			grid-row: 1;
-		}
+	.featured-work__card:hover .featured-work__visit,
+	.featured-work__card:focus-visible .featured-work__visit {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
-	.work-card__tags {
+	.featured-work__card:hover .featured-work__visit {
+		background: var(--color-brand-green);
+		color: var(--color-brand-dark);
+		border-color: transparent;
+	}
+
+	.featured-work__body {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.35rem;
+		flex-direction: column;
+		gap: 0.45rem;
+		padding-inline: 0.15rem;
 	}
 
-	.work-card__title {
-		margin-top: 0.55rem;
-		font-size: clamp(1.25rem, 3vw, 1.75rem);
+	.featured-work__title {
+		font-size: clamp(1.125rem, 2.2vw, 1.375rem);
 		font-weight: 500;
 		letter-spacing: -0.02em;
+		line-height: 1.2;
 		color: white;
-		line-height: 1.15;
+		transition: color 0.3s ease;
 	}
 
-	.work-card__desc {
-		margin-top: 0.4rem;
-		font-size: clamp(0.875rem, 1.8vw, 0.9375rem);
-		line-height: 1.55;
-	}
-
-	.work-card__link {
-		margin-top: 0.75rem;
-		display: inline-flex;
-		align-items: center;
-		gap: 0.4rem;
-		font-size: clamp(0.875rem, 1.6vw, 0.9375rem);
-		font-weight: 600;
+	.featured-work__card:hover .featured-work__title,
+	.featured-work__card:focus-visible .featured-work__title {
 		color: var(--color-brand-green);
-		transition: color 0.25s ease;
 	}
 
-	.work-card__link:hover {
-		color: var(--color-brand-gold);
-	}
-
-	.work-scroll.is-complete .work-door {
-		visibility: hidden;
+	.featured-work__meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 0.75rem;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.work-scroll__spacer {
-			height: auto;
+		.featured-work__media,
+		.featured-work__img,
+		.featured-work__visit {
+			transition: none;
 		}
 
-		.work-scroll__stage {
-			position: relative;
-			height: auto;
-			min-height: 0;
-			overflow: visible;
+		.featured-work__card:hover .featured-work__media,
+		.featured-work__card:focus-visible .featured-work__media {
+			transform: none;
 		}
 
-		.work-door {
-			display: none;
+		.featured-work__card:hover .featured-work__img,
+		.featured-work__card:focus-visible .featured-work__img {
+			transform: none;
 		}
 
-		.work-catalog {
-			position: relative;
+		.featured-work__visit {
 			opacity: 1;
 			transform: none;
-			padding: 3rem 1rem;
-		}
-
-		.work-catalog__list {
-			display: flex;
-			flex-direction: column;
-			gap: 1.25rem;
-		}
-
-		.work-catalog__item {
-			position: relative;
-			inset: auto;
-			opacity: 1 !important;
-			transform: none !important;
-			filter: none !important;
-			pointer-events: auto;
-		}
-
-		.work-door__hint {
-			animation: none;
 		}
 	}
 </style>
