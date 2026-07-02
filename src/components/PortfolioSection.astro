@@ -6,7 +6,7 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 
 <section
 	id="work"
-	class="relative scroll-mt-24 overflow-hidden px-4 py-20 sm:px-6 sm:py-28 lg:px-8"
+	class="featured-work relative scroll-mt-24 overflow-hidden px-4 py-20 sm:px-6 sm:py-28 lg:px-8"
 	aria-labelledby="work-heading"
 >
 	<div
@@ -15,7 +15,7 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 		aria-hidden="true"
 	/>
 	<div class="mx-auto max-w-6xl">
-		<header class="featured-work__header reveal">
+		<header class="featured-work__header reveal reveal-zoom">
 			<div class="featured-work__header-row">
 				<div>
 					<p class="eyebrow-pill mb-5">
@@ -31,7 +31,8 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 					</h2>
 				</div>
 				<p class="featured-work__count text-eyebrow-brand">
-					{String(projects.length).padStart(2, "0")} sitios · 2022 — 2026
+					<span class="featured-work__count-num">{String(projects.length).padStart(2, "0")}</span>
+					sitios · 2022 — 2026
 				</p>
 			</div>
 			<p class="text-muted-body mt-5 max-w-2xl text-base sm:text-lg">
@@ -41,68 +42,76 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 
 		<ul class="featured-work__grid reveal-stagger mt-12 lg:mt-14" aria-label="Proyectos publicados">
 			{
-				projects.map((p) => (
-					<li>
+				projects.map((p, index) => (
+					<li class="featured-work__item" style={`--card-index: ${index}`}>
 						<a
 							href={p.url}
 							target="_blank"
 							rel="noopener noreferrer"
 							class="featured-work__card group"
+							data-featured-tilt
 						>
 							<div class="featured-work__media">
+								<div class="featured-work__border" aria-hidden="true" />
 								<div
 									class:list={[
-										"featured-work__glow pointer-events-none absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-100",
+										"featured-work__glow pointer-events-none absolute inset-0 bg-gradient-to-br opacity-0",
 										p.accent.glow,
 									]}
 									aria-hidden="true"
 								/>
-								{p.scrollGif ? (
-									<img
-										src={p.scrollGif}
-										alt=""
-										class="featured-work__img h-full w-full object-cover object-top"
-										loading="lazy"
-										decoding="async"
-									/>
-								) : p.previewLocal ? (
-									<img
-										src={p.previewLocal}
-										alt=""
-										class="featured-work__img portfolio-preview-pan max-h-none w-full"
-										loading="lazy"
-										decoding="async"
-										width="1200"
-										height="750"
-									/>
-								) : (
-									<img
-										src={siteScreenshotUrl(p.url)}
-										alt=""
-										class="featured-work__img portfolio-preview-pan max-h-none w-full"
-										loading="lazy"
-										decoding="async"
-										width="1200"
-										height="750"
-									/>
-								)}
+								<div class="featured-work__shine" aria-hidden="true" />
+								<div class="featured-work__media-inner">
+									{p.scrollGif ? (
+										<img
+											src={p.scrollGif}
+											alt=""
+											class="featured-work__img h-full w-full object-cover object-top"
+											loading="lazy"
+											decoding="async"
+										/>
+									) : p.previewLocal ? (
+										<img
+											src={p.previewLocal}
+											alt=""
+											class="featured-work__img portfolio-preview-pan max-h-none w-full"
+											loading="lazy"
+											decoding="async"
+											width="1200"
+											height="750"
+										/>
+									) : (
+										<img
+											src={siteScreenshotUrl(p.url)}
+											alt=""
+											class="featured-work__img portfolio-preview-pan max-h-none w-full"
+											loading="lazy"
+											decoding="async"
+											width="1200"
+											height="750"
+										/>
+									)}
+								</div>
 								<span class="featured-work__visit" aria-hidden="true">
-									<ArrowUpRight size={18} stroke-width={2} />
+									<ArrowUpRight size={18} stroke-width={2} class="featured-work__visit-icon" />
 								</span>
 							</div>
 							<div class="featured-work__body">
-								<h3 class="featured-work__title font-display">{p.title}</h3>
+								<h3 class="featured-work__title font-display">
+									<span class="featured-work__title-text">{p.title}</span>
+									<span class="featured-work__title-line" aria-hidden="true" />
+								</h3>
 								<div class="featured-work__meta">
 									<span
 										class:list={[
-											"rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
+											"featured-work__pill rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
 											p.accent.pill,
 										]}
 									>
 										{p.year}
 									</span>
 									{p.tags.slice(0, 2).map((t) => (
-										<span class="text-[11px] font-medium text-white/45">{t}</span>
+										<span class="featured-work__tag text-[11px] font-medium text-white/45">{t}</span>
 									))}
 								</div>
 							</div>
@@ -114,7 +123,16 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 	</div>
 </section>
 
+<script>
+	import "../scripts/featured-work.ts";
+</script>
+
 <style>
+	.featured-work {
+		--featured-ease: cubic-bezier(0.16, 1, 0.3, 1);
+		--featured-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
 	.featured-work__header-row {
 		display: flex;
 		flex-wrap: wrap;
@@ -131,6 +149,32 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 		text-transform: uppercase;
 		text-align: right;
 		line-height: 1.4;
+	}
+
+	.featured-work__count-num {
+		display: inline-block;
+		font-family: var(--font-display);
+		font-size: 1.05em;
+		color: var(--color-brand-green);
+		transition: transform 0.6s var(--featured-ease);
+	}
+
+	.featured-work__header.is-inview .featured-work__count-num {
+		animation: featured-count-pop 0.85s var(--featured-ease) 0.35s both;
+	}
+
+	@keyframes featured-count-pop {
+		0% {
+			opacity: 0;
+			transform: translateY(0.5rem) scale(0.85);
+		}
+		70% {
+			transform: translateY(-2px) scale(1.06);
+		}
+		100% {
+			opacity: 1;
+			transform: translateY(0) scale(1);
+		}
 	}
 
 	@media (max-width: 639px) {
@@ -153,6 +197,26 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 		}
 	}
 
+	/* Entrada alternada izquierda / derecha */
+	.featured-work__grid.reveal-stagger > .featured-work__item {
+		transform: translate3d(0, 2.75rem, 0) scale(0.93);
+		filter: blur(12px);
+		transition-duration: 820ms;
+	}
+
+	.featured-work__grid.reveal-stagger > .featured-work__item:nth-child(odd) {
+		transform: translate3d(-2.25rem, 2.25rem, 0) scale(0.93);
+	}
+
+	.featured-work__grid.reveal-stagger > .featured-work__item:nth-child(even) {
+		transform: translate3d(2.25rem, 2.25rem, 0) scale(0.93);
+	}
+
+	.featured-work__grid.reveal-stagger.is-inview > .featured-work__item:nth-child(n) {
+		transform: translate3d(0, 0, 0) scale(1);
+		filter: blur(0);
+	}
+
 	.featured-work__card {
 		display: flex;
 		flex-direction: column;
@@ -168,6 +232,8 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 	}
 
 	.featured-work__media {
+		--tilt-x: 0deg;
+		--tilt-y: 0deg;
 		position: relative;
 		overflow: hidden;
 		border-radius: calc(var(--radius-card) - 0.15rem);
@@ -177,29 +243,130 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 		box-shadow:
 			inset 0 1px 0 rgb(255 255 255 / 0.06),
 			0 24px 64px -32px rgb(0 0 0 / 0.65);
+		transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
 		transition:
-			border-color 0.45s var(--ease-spring),
-			box-shadow 0.55s var(--ease-spring),
-			transform 0.55s var(--ease-spring);
+			border-color 0.5s var(--featured-ease),
+			box-shadow 0.6s var(--featured-ease),
+			transform 0.15s linear;
+		will-change: transform;
 	}
 
+	.featured-work__card.is-tilting .featured-work__media,
 	.featured-work__card:hover .featured-work__media,
 	.featured-work__card:focus-visible .featured-work__media {
-		border-color: rgb(255 255 255 / 0.14);
+		border-color: rgb(255 255 255 / 0.16);
 		box-shadow:
-			inset 0 1px 0 rgb(255 255 255 / 0.08),
+			inset 0 1px 0 rgb(255 255 255 / 0.09),
 			var(--shadow-glow-green),
-			0 32px 80px -36px rgb(0 0 0 / 0.75);
-		transform: translateY(-3px);
+			0 36px 90px -38px rgb(0 0 0 / 0.78);
+	}
+
+	.featured-work__card:not(.is-tilting):hover .featured-work__media,
+	.featured-work__card:not(.is-tilting):focus-visible .featured-work__media {
+		transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(-4px);
+	}
+
+	.featured-work__border {
+		position: absolute;
+		inset: -1px;
+		border-radius: inherit;
+		padding: 1px;
+		background: linear-gradient(
+			135deg,
+			rgb(99 185 149 / 0.7),
+			rgb(224 159 62 / 0.45),
+			transparent 55%,
+			rgb(99 185 149 / 0.35)
+		);
+		background-size: 220% 220%;
+		opacity: 0;
+		transition: opacity 0.55s var(--featured-ease);
+		mask:
+			linear-gradient(#fff 0 0) content-box,
+			linear-gradient(#fff 0 0);
+		mask-composite: exclude;
+		-webkit-mask:
+			linear-gradient(#fff 0 0) content-box,
+			linear-gradient(#fff 0 0);
+		-webkit-mask-composite: xor;
+		pointer-events: none;
+		z-index: 3;
+	}
+
+	.featured-work__card:hover .featured-work__border,
+	.featured-work__card:focus-visible .featured-work__border {
+		opacity: 1;
+		animation: featured-border-flow 2.8s linear infinite;
+	}
+
+	@keyframes featured-border-flow {
+		0% {
+			background-position: 0% 50%;
+		}
+		50% {
+			background-position: 100% 50%;
+		}
+		100% {
+			background-position: 0% 50%;
+		}
+	}
+
+	.featured-work__glow {
+		z-index: 1;
+		transition: opacity 0.65s var(--featured-ease);
+	}
+
+	.featured-work__card:hover .featured-work__glow,
+	.featured-work__card:focus-visible .featured-work__glow {
+		opacity: 1;
+	}
+
+	.featured-work__shine {
+		position: absolute;
+		inset: 0;
+		z-index: 2;
+		background: linear-gradient(
+			105deg,
+			transparent 38%,
+			rgb(255 255 255 / 0.07) 48%,
+			rgb(255 255 255 / 0.14) 50%,
+			rgb(255 255 255 / 0.07) 52%,
+			transparent 62%
+		);
+		transform: translateX(-120%) skewX(-12deg);
+		transition: transform 0.85s var(--featured-ease-out);
+		pointer-events: none;
+	}
+
+	.featured-work__card:hover .featured-work__shine,
+	.featured-work__card:focus-visible .featured-work__shine {
+		transform: translateX(120%) skewX(-12deg);
+	}
+
+	.featured-work__media-inner {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+	}
+
+	.featured-work__media:has(.portfolio-preview-pan) .featured-work__media-inner {
+		height: auto;
 	}
 
 	.featured-work__img {
-		transition: transform 0.7s var(--ease-spring);
+		--img-shift-x: 0px;
+		--img-shift-y: 0px;
+		transition:
+			transform 0.7s var(--featured-ease),
+			filter 0.5s ease;
+		transform: scale(1.02) translate3d(var(--img-shift-x), var(--img-shift-y), 0);
 	}
 
 	.featured-work__card:hover .featured-work__img,
 	.featured-work__card:focus-visible .featured-work__img {
-		transform: scale(1.03);
+		transform: scale(1.06) translate3d(var(--img-shift-x), var(--img-shift-y), 0);
+		filter: saturate(1.08) brightness(1.04);
 	}
 
 	.featured-work__media:has(.portfolio-preview-pan) {
@@ -212,35 +379,48 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 		width: 100%;
 		height: auto;
 		transform: none;
+		filter: none;
+	}
+
+	.featured-work__card:hover .featured-work__media:has(.portfolio-preview-pan) .featured-work__img,
+	.featured-work__card:focus-visible .featured-work__media:has(.portfolio-preview-pan) .featured-work__img {
+		transform: none;
+		filter: saturate(1.05);
 	}
 
 	.featured-work__visit {
 		position: absolute;
 		right: 0.85rem;
 		top: 0.85rem;
+		z-index: 4;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: 2.25rem;
-		height: 2.25rem;
+		width: 2.35rem;
+		height: 2.35rem;
 		border-radius: 9999px;
-		border: 1px solid rgb(255 255 255 / 0.12);
+		border: 1px solid rgb(255 255 255 / 0.14);
 		background: rgb(10 11 12 / 0.72);
 		color: white;
 		opacity: 0;
-		transform: translateY(4px);
+		transform: translateY(6px) scale(0.88);
 		transition:
-			opacity 0.35s ease,
-			transform 0.35s var(--ease-spring),
-			background 0.25s ease,
-			color 0.25s ease;
-		backdrop-filter: blur(8px);
+			opacity 0.4s var(--featured-ease),
+			transform 0.45s var(--featured-ease),
+			background 0.3s ease,
+			color 0.3s ease,
+			border-color 0.3s ease;
+		backdrop-filter: blur(10px);
+	}
+
+	.featured-work__visit-icon {
+		transition: transform 0.4s var(--featured-ease);
 	}
 
 	.featured-work__card:hover .featured-work__visit,
 	.featured-work__card:focus-visible .featured-work__visit {
 		opacity: 1;
-		transform: translateY(0);
+		transform: translateY(0) scale(1);
 	}
 
 	.featured-work__card:hover .featured-work__visit {
@@ -249,25 +429,60 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 		border-color: transparent;
 	}
 
+	.featured-work__card:hover .featured-work__visit-icon {
+		transform: translate(2px, -2px) rotate(-8deg);
+	}
+
 	.featured-work__body {
 		display: flex;
 		flex-direction: column;
 		gap: 0.45rem;
 		padding-inline: 0.15rem;
+		transition: transform 0.55s var(--featured-ease);
+	}
+
+	.featured-work__card:hover .featured-work__body,
+	.featured-work__card:focus-visible .featured-work__body {
+		transform: translateX(4px);
 	}
 
 	.featured-work__title {
+		position: relative;
+		display: inline-flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.35rem;
 		font-size: clamp(1.125rem, 2.2vw, 1.375rem);
 		font-weight: 500;
 		letter-spacing: -0.02em;
 		line-height: 1.2;
-		color: white;
-		transition: color 0.3s ease;
 	}
 
-	.featured-work__card:hover .featured-work__title,
-	.featured-work__card:focus-visible .featured-work__title {
+	.featured-work__title-text {
+		color: white;
+		transition:
+			color 0.35s var(--featured-ease),
+			transform 0.45s var(--featured-ease);
+	}
+
+	.featured-work__card:hover .featured-work__title-text,
+	.featured-work__card:focus-visible .featured-work__title-text {
 		color: var(--color-brand-green);
+		transform: translateX(2px);
+	}
+
+	.featured-work__title-line {
+		display: block;
+		width: 0;
+		height: 2px;
+		border-radius: 9999px;
+		background: linear-gradient(90deg, var(--color-brand-green), var(--color-brand-gold));
+		transition: width 0.55s var(--featured-ease);
+	}
+
+	.featured-work__card:hover .featured-work__title-line,
+	.featured-work__card:focus-visible .featured-work__title-line {
+		width: 100%;
 	}
 
 	.featured-work__meta {
@@ -277,24 +492,76 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 		gap: 0.5rem 0.75rem;
 	}
 
+	.featured-work__pill,
+	.featured-work__tag {
+		transition:
+			opacity 0.4s var(--featured-ease),
+			transform 0.45s var(--featured-ease);
+	}
+
+	.featured-work__tag {
+		opacity: 0.72;
+		transform: translateY(2px);
+	}
+
+	.featured-work__card:hover .featured-work__pill,
+	.featured-work__card:focus-visible .featured-work__pill {
+		transform: translateY(-1px);
+	}
+
+	.featured-work__card:hover .featured-work__tag:nth-child(2),
+	.featured-work__card:focus-visible .featured-work__tag:nth-child(2) {
+		opacity: 1;
+		transform: translateY(0);
+		transition-delay: 0.04s;
+	}
+
+	.featured-work__card:hover .featured-work__tag:nth-child(3),
+	.featured-work__card:focus-visible .featured-work__tag:nth-child(3) {
+		opacity: 1;
+		transform: translateY(0);
+		transition-delay: 0.1s;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.featured-work__media,
 		.featured-work__img,
-		.featured-work__visit {
+		.featured-work__visit,
+		.featured-work__body,
+		.featured-work__title-text,
+		.featured-work__title-line,
+		.featured-work__pill,
+		.featured-work__tag,
+		.featured-work__border,
+		.featured-work__shine,
+		.featured-work__glow {
 			transition: none;
+			animation: none;
 		}
 
 		.featured-work__card:hover .featured-work__media,
-		.featured-work__card:focus-visible .featured-work__media {
+		.featured-work__card:focus-visible .featured-work__media,
+		.featured-work__card:hover .featured-work__body,
+		.featured-work__card:focus-visible .featured-work__body {
 			transform: none;
 		}
 
 		.featured-work__card:hover .featured-work__img,
 		.featured-work__card:focus-visible .featured-work__img {
 			transform: none;
+			filter: none;
 		}
 
 		.featured-work__visit {
+			opacity: 1;
+			transform: none;
+		}
+
+		.featured-work__title-line {
+			width: 2.5rem;
+		}
+
+		.featured-work__tag {
 			opacity: 1;
 			transform: none;
 		}
