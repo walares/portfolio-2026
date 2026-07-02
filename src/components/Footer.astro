@@ -2,11 +2,19 @@
 import { ArrowUp } from "@lucide/astro";
 import BrandLogo from "./BrandLogo.astro";
 import { site } from "../data/site";
+import { formatNavAria, getLocaleContent, type Locale } from "../i18n";
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const content = getLocaleContent(locale);
 
 const footerLinks = [
-	{ href: "#servicios", label: "Servicios" },
-	{ href: "#work", label: "Proyectos" },
-	{ href: "#contacto", label: "Contacto" },
+	{ href: "#servicios", label: content.nav.services },
+	{ href: "#work", label: content.nav.work },
+	{ href: "#contacto", label: content.nav.contact },
 ] as const;
 ---
 
@@ -17,15 +25,15 @@ const footerLinks = [
 				<a
 					href="#inicio"
 					class="inline-flex rounded-lg outline-none ring-brand-green/50 transition hover:opacity-90 focus-visible:ring-2"
-					aria-label={`${site.name} — inicio`}
+					aria-label={formatNavAria(content.nav.homeAria, site.name)}
 				>
 					<BrandLogo size="footer" showWordmark />
 				</a>
 				<p class="text-muted-caption mt-3 max-w-xs text-sm">
-					Diseño y desarrollo web — Lima, Perú y trabajo remoto.
+					{content.footer.tagline}
 				</p>
 			</div>
-			<nav aria-label="Pie de página">
+			<nav aria-label={content.footer.navAria}>
 				<ul class="flex flex-wrap gap-x-6 gap-y-2">
 					{
 						footerLinks.map(({ href, label }) => (
@@ -45,7 +53,7 @@ const footerLinks = [
 				href="#inicio"
 				class="inline-flex items-center gap-2 text-sm font-semibold text-brand-green transition hover:text-brand-gold"
 			>
-				Volver arriba
+				{content.footer.backToTop}
 				<ArrowUp size={16} stroke-width={2} class="lucide-anim-nudge shrink-0" aria-hidden="true" />
 			</a>
 		</div>

@@ -1,7 +1,15 @@
 import { portfolioProjects } from "../data/portfolio";
 import { absoluteUrl, site } from "../data/site";
+import {
+	defaultLocale,
+	getAlternateLocale,
+	getLocaleContent,
+	localePath,
+	type Locale,
+} from "../i18n";
 
 export type SeoProps = {
+	locale?: Locale;
 	title?: string;
 	description?: string;
 	path?: string;
@@ -10,35 +18,45 @@ export type SeoProps = {
 };
 
 export function resolveSeo({
-	title = site.title,
-	description = site.description,
-	path = "/",
+	locale = defaultLocale,
+	title,
+	description,
+	path,
 	noindex = false,
 	ogImagePath = site.ogImagePath,
 }: SeoProps = {}) {
-	const canonical = absoluteUrl(path);
+	const content = getLocaleContent(locale);
+	const pagePath = path ?? content.path;
+	const canonical = absoluteUrl(pagePath);
 	const ogImage = absoluteUrl(ogImagePath);
 
 	return {
-		title,
-		description,
+		title: title ?? content.title,
+		description: description ?? content.description,
 		canonical,
 		ogImage,
 		noindex,
+		locale,
+		hreflang: content.hreflang,
+		language: content.language,
 	};
 }
 
-export function buildJsonLd(path = "/") {
-	const pageUrl = absoluteUrl(path);
+export function buildJsonLd(locale: Locale = defaultLocale, path?: string) {
+	const content = getLocaleContent(locale);
+	const pagePath = path ?? content.path;
+	const pageUrl = absoluteUrl(pagePath);
 	const ogImage = absoluteUrl(site.ogImagePath);
+	const sameAs = [...site.socialProfiles];
+	const countryName = locale === "en" ? site.location.countryEn : site.location.country;
 
 	const webSite = {
 		"@type": "WebSite",
 		"@id": `${site.url}/#website`,
 		url: site.url,
 		name: site.name,
-		description: site.description,
-		inLanguage: site.language,
+		description: content.description,
+		inLanguage: content.language,
 		publisher: { "@id": `${site.url}/#organization` },
 	};
 
@@ -52,7 +70,7 @@ export function buildJsonLd(path = "/") {
 		url: site.url,
 		logo: logoUrl,
 		image: ogImage,
-		description: site.description,
+		description: content.description,
 		email: site.email,
 		telephone: site.phoneDisplay,
 		areaServed: ["PE", "LATAM"],
@@ -64,134 +82,173 @@ export function buildJsonLd(path = "/") {
 		},
 		geo: {
 			"@type": "GeoCoordinates",
+			latitude: site.location.latitude,
+			longitude: site.location.longitude,
 			addressCountry: site.location.countryCode,
 		},
-		knowsAbout: [...site.technologies, ...site.services],
-		sameAs: [] as string[],
+		knowsAbout: [...site.technologies, ...content.services],
+		...(sameAs.length > 0 ? { sameAs } : {}),
 	};
 
 	const person = {
 		"@type": "Person",
 		"@id": `${site.url}/#person`,
 		name: site.personName,
-		jobTitle: "Diseñador y desarrollador web",
+		jobTitle: content.jobTitle,
 		worksFor: { "@id": `${site.url}/#organization` },
 		url: pageUrl,
 		email: site.email,
 		telephone: site.phoneDisplay,
+		...(sameAs.length > 0 ? { sameAs } : {}),
 	};
 
 	const webPage = {
 		"@type": "WebPage",
 		"@id": `${pageUrl}#webpage`,
 		url: pageUrl,
-		name: site.title,
-		description: site.description,
+		name: content.title,
+		description: content.description,
 		isPartOf: { "@id": `${site.url}/#website` },
 		about: { "@id": `${site.url}/#organization` },
-		inLanguage: site.language,
+		inLanguage: content.language,
+		dateModified: new Date().toISOString().slice(0, 10),
 	};
+
+	const serviceNodes = content.services.map((name, index) => ({
+		"@type": "Service",
+		"@id": `${site.url}/#service-${content.language}-${index + 1}`,
+		name,
+		provider: { "@id": `${site.url}/#organization` },
+		areaServed: ["PE", "LATAM"],
+	}));
 
 	const workList = {
 		"@type": "ItemList",
-		"@id": `${site.url}/#portfolio`,
-		name: "Proyectos destacados",
-		itemListElement: portfolioProjects.map((project, index) => ({
-			"@type": "ListItem",
-			position: index + 1,
-			item: {
-				"@type": "CreativeWork",
-				name: project.title,
-				description: project.description,
-				url: project.url,
-				dateCreated: project.year,
-				keywords: project.tags.join(", "),
+		"@id": `${site.url}/#portfolio-${content.language}`,
+		name: content.portfolioSection.heading + content.portfolioSection.headingMuted,
+		itemListElement: portfolioProjects.map((project, index) => {
+			const copy = content.portfolioSection.projects[project.id];
+			return {
+				"@type": "ListItem",
+				position: index + 1,
+				item: {
+					"@type": "CreativeWork",
+					name: project.title,
+					description: copy?.description ?? project.description,
+					url: project.url,
+					dateCreated: project.year,
+					keywords: (copy?.tags ?? project.tags).join(", "),
+				},
+			};
+		}),
+	};
+
+	const faqPage = {
+		"@type": "FAQPage",
+		"@id": `${pageUrl}#faq`,
+		mainEntity: content.faqs.map((faq) => ({
+			"@type": "Question",
+			name: faq.question,
+			acceptedAnswer: {
+				"@type": "Answer",
+				text: faq.answer,
 			},
 		})),
 	};
 
 	return {
 		"@context": "https://schema.org",
-		"@graph": [webSite, organization, person, webPage, workList],
+		"@graph": [webSite, organization, person, webPage, ...serviceNodes, workList, faqPage],
 	};
 }
 
-export function buildLlmsTxt(full = false): string {
+export function buildLlmsTxt(full = false, locale: Locale = defaultLocale): string {
+	const content = getLocaleContent(locale);
+	const alternate = getAlternateLocale(locale);
+	const alternatePath = localePath(alternate);
+	const countryName = locale === "en" ? site.location.countryEn : site.location.country;
+	const remoteNote = locale === "en" ? "remote work across LATAM" : "trabajo remoto LATAM";
+	const languageLabel =
+		locale === "en" ? `English (${content.locale})` : `español (${content.locale})`;
+
 	const lines: string[] = [
 		`# ${site.personName} — ${site.name}`,
 		"",
-		`> ${site.description}`,
+		`> ${content.description}`,
 		"",
-		`Sitio oficial: ${site.url}`,
-		`Idioma: español (${site.locale})`,
-		`Ubicación: ${site.location.city}, ${site.location.country} (trabajo remoto LATAM)`,
+		`${content.llms.officialSite}: ${absoluteUrl(content.path)}`,
+		`${content.llms.language}: ${languageLabel}`,
+		`${content.llms.location}: ${site.location.city}, ${countryName} (${remoteNote})`,
 		"",
 	];
 
 	if (full) {
 		lines.push(
-			"## Resumen para asistentes de IA",
+			`## ${content.llms.aiSummary}`,
 			"",
-			site.audience,
+			content.audience,
 			"",
-			site.tagline,
+			content.tagline,
 			"",
 		);
 	}
 
-	lines.push(
-		"## Servicios",
-		"",
-		...site.services.map((s) => `- ${s}`),
-		"",
-		"## Capacidades",
-		"",
-		"- Rendimiento y Core Web Vitals",
-		"- Diseño UI/UX y sistemas modulares",
-		"- SEO técnico: semántica, metadatos, datos estructurados",
-		"- WordPress, Astro y React",
-		"",
-		"## Stack habitual",
-		"",
-		...site.technologies.map((t) => `- ${t}`),
-		"",
-		"## Proyectos publicados",
-		"",
-	);
+	lines.push(`## ${content.llms.services}`, "", ...content.services.map((s) => `- ${s}`), "", `## ${content.llms.faqs}`, "");
+
+	for (const faq of content.faqs) {
+		lines.push(`### ${faq.question}`, "", faq.answer, "");
+	}
+
+	lines.push(`## ${content.llms.capabilities}`, "", ...content.llms.capabilityItems.map((item) => `- ${item}`), "");
+
+	lines.push("", `## ${content.llms.stack}`, "", ...site.technologies.map((t) => `- ${t}`), "", `## ${content.llms.projects}`, "");
 
 	for (const project of portfolioProjects) {
+		const copy = content.portfolioSection.projects[project.id];
 		lines.push(
 			`### ${project.title} (${project.year})`,
-			`- URL: ${project.url}`,
-			`- ${project.description}`,
-			`- Etiquetas: ${project.tags.join(", ")}`,
+			`- ${content.llms.urlLabel}: ${project.url}`,
+			`- ${copy?.description ?? project.description}`,
+			`- ${content.llms.tagsLabel}: ${(copy?.tags ?? project.tags).join(", ")}`,
 			"",
 		);
 	}
 
 	lines.push(
-		"## Contacto",
+		`## ${content.llms.contact}`,
 		"",
 		`- Email: ${site.email}`,
 		`- WhatsApp: ${site.phoneDisplay} (https://wa.me/${site.phoneE164})`,
-		`- Formulario en la web: ${absoluteUrl("/")}#contacto`,
+		`- ${content.llms.formLink}: ${absoluteUrl(content.path)}#contacto`,
 		"",
-		"## Palabras clave",
+		`## ${content.llms.keywords}`,
 		"",
-		site.keywords.join(", "),
+		content.keywords.join(", "),
+		"",
+		locale === "es"
+			? `English version: ${absoluteUrl(alternatePath)}`
+			: `Versión en español: ${absoluteUrl(alternatePath)}`,
 		"",
 	);
 
 	if (full) {
 		lines.push(
-			"## Enlaces útiles",
+			`## ${content.llms.usefulLinks}`,
 			"",
-			`- Resumen corto (llms.txt): ${absoluteUrl("/llms.txt")}`,
-			`- Versión extendida: ${absoluteUrl("/llms-full.txt")}`,
-			`- Sitemap: ${absoluteUrl("/sitemap-index.xml")}`,
+			`- ${content.llms.shortSummary}: ${absoluteUrl("/llms.txt")}`,
+			`- ${content.llms.extendedVersion}: ${absoluteUrl("/llms-full.txt")}`,
+			`- ${content.llms.sitemap}: ${absoluteUrl("/sitemap-index.xml")}`,
 			"",
 		);
 	}
 
 	return lines.join("\n").trimEnd() + "\n";
+}
+
+export function getHreflangAlternates(currentPath: string) {
+	return {
+		es: absoluteUrl(currentPath === "/en/" ? "/" : "/"),
+		en: absoluteUrl("/en/"),
+		default: absoluteUrl("/"),
+	};
 }

@@ -1,13 +1,29 @@
 ---
-import { MessageCircle, Menu, ChevronDown } from "@lucide/astro";
+import { MessageCircle, Menu, ChevronDown, Languages } from "@lucide/astro";
 import BrandLogo from "./BrandLogo.astro";
 import { site } from "../data/site";
+import {
+	formatNavAria,
+	getAlternateLocale,
+	getLocaleContent,
+	localePath,
+	type Locale,
+} from "../i18n";
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const content = getLocaleContent(locale);
+const alternateLocale = getAlternateLocale(locale);
+const alternatePath = localePath(alternateLocale);
 
 const links = [
-	{ href: "#inicio", label: "Inicio" },
-	{ href: "#servicios", label: "Servicios" },
-	{ href: "#work", label: "Proyectos" },
-	{ href: "#contacto", label: "Contacto" },
+	{ href: "#inicio", label: content.nav.home },
+	{ href: "#servicios", label: content.nav.services },
+	{ href: "#work", label: content.nav.work },
+	{ href: "#contacto", label: content.nav.contact },
 ] as const;
 ---
 
@@ -19,12 +35,12 @@ const links = [
 		<a
 			href="#inicio"
 			class="rounded-lg outline-none ring-brand-green/60 ring-offset-2 ring-offset-transparent transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-offset-brand-dark"
-			aria-label={`${site.name} — inicio`}
+			aria-label={formatNavAria(content.nav.homeAria, site.name)}
 		>
 			<BrandLogo size="nav" />
 		</a>
 
-		<nav class="hidden items-center gap-0.5 md:flex" aria-label="Navegación principal en escritorio">
+		<nav class="hidden items-center gap-0.5 md:flex" aria-label={content.nav.desktopNavAria}>
 			<ul class="flex items-center">
 				{
 					links.map(({ href, label }) => (
@@ -43,20 +59,31 @@ const links = [
 
 		<div class="flex items-center gap-2">
 			<a
+				href={alternatePath}
+				class="inline-flex items-center gap-1.5 rounded-full border border-white/[0.1] bg-white/[0.04] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white/75 transition hover:border-white/20 hover:bg-white/[0.07] hover:text-white"
+				aria-label={content.switchAria}
+				hreflang={getLocaleContent(alternateLocale).hreflang}
+				lang={getLocaleContent(alternateLocale).language}
+			>
+				<Languages size={14} stroke-width={2} aria-hidden="true" />
+				{content.switchLabel}
+			</a>
+
+			<a
 				href="#contacto"
 				class="btn-primary group hidden items-center gap-2 rounded-full bg-brand-green px-5 py-2.5 text-sm font-semibold text-brand-dark md:inline-flex"
 			>
 				<MessageCircle size={16} stroke-width={2} class="lucide-anim-hover-pop shrink-0" aria-hidden="true" />
-				Hablemos
+				{content.nav.cta}
 			</a>
 
 			<details class="nav-drawer relative md:hidden">
 				<summary
 					class="list-none flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.1] bg-white/[0.04] px-3 py-2 text-sm font-medium text-white/92 outline-none ring-brand-green/40 [&::-webkit-details-marker]:hidden focus-visible:ring-2"
-					aria-label="Abrir menú"
+					aria-label={content.nav.openMenuAria}
 				>
 					<Menu size={18} stroke-width={2} class="shrink-0 text-white/85" aria-hidden="true" />
-					Menú
+					{content.nav.menu}
 					<ChevronDown
 						size={16}
 						stroke-width={2}
@@ -82,11 +109,20 @@ const links = [
 						}
 					</ul>
 					<a
+						href={alternatePath}
+						class="mt-2 flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-center text-sm font-semibold text-white/88"
+						hreflang={getLocaleContent(alternateLocale).hreflang}
+						lang={getLocaleContent(alternateLocale).language}
+					>
+						<Languages size={16} stroke-width={2} class="shrink-0" aria-hidden="true" />
+						{content.switchLabel}
+					</a>
+					<a
 						href="#contacto"
 						class="mt-2 flex items-center justify-center gap-2 rounded-lg bg-brand-green px-3 py-2.5 text-center text-sm font-semibold text-brand-dark"
 					>
 						<MessageCircle size={16} stroke-width={2} class="shrink-0" aria-hidden="true" />
-						Hablemos
+						{content.nav.cta}
 					</a>
 				</div>
 			</details>

@@ -2,21 +2,19 @@
 import "../styles/global.css";
 import SeoHead from "../components/SeoHead.astro";
 import { site } from "../data/site";
+import { getLocaleContent, type Locale } from "../i18n";
 import type { SeoProps } from "../lib/seo";
 
-interface Props extends SeoProps {}
+interface Props extends SeoProps {
+	locale: Locale;
+}
 
-const {
-	title = site.title,
-	description = site.description,
-	path = "/",
-	noindex = false,
-	ogImagePath,
-} = Astro.props;
+const { locale, title, description, path, noindex = false, ogImagePath } = Astro.props;
+const content = getLocaleContent(locale);
 ---
 
 <!doctype html>
-<html lang={site.language}>
+<html lang={content.language}>
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -25,9 +23,16 @@ const {
 		<link rel="apple-touch-icon" href={site.logoPath} />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
-		<meta name="description" content={description} />
-		<title>{title}</title>
-		<SeoHead {title} {description} {path} {noindex} ogImagePath={ogImagePath} />
+		<meta name="description" content={description ?? content.description} />
+		<title>{title ?? content.title}</title>
+		<SeoHead
+			{locale}
+			title={title ?? content.title}
+			description={description ?? content.description}
+			path={path ?? content.path}
+			{noindex}
+			ogImagePath={ogImagePath}
+		/>
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
@@ -38,7 +43,7 @@ const {
 	<body
 		class="min-h-dvh antialiased accent-brand-green selection:bg-brand-green/28 selection:text-white underline-offset-[0.22em]"
 	>
-		<a href="#contenido-principal" class="skip-link">Saltar al contenido</a>
+		<a href="#contenido-principal" class="skip-link">{content.skipLink}</a>
 		<slot />
 		<script>
 			import "../scripts/smooth-scroll.ts";

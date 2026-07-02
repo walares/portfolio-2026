@@ -1,7 +1,15 @@
 ---
 import { ArrowUpRight, FolderOpen } from "@lucide/astro";
 import { portfolioProjects as projects } from "../data/portfolio";
+import { getLocaleContent, type Locale } from "../i18n";
 import { siteScreenshotUrl } from "../lib/siteScreenshot";
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const content = getLocaleContent(locale);
 ---
 
 <section
@@ -20,29 +28,33 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 				<div>
 					<p class="eyebrow-pill mb-5">
 						<FolderOpen size={14} stroke-width={2} class="text-brand-green" aria-hidden="true" />
-						Portfolio
+						{content.portfolioSection.eyebrow}
 					</p>
 					<h2
 						id="work-heading"
 						class="headline-section text-pretty text-3xl text-white sm:text-4xl lg:text-[2.85rem]"
 					>
-						Proyectos
-						<span class="headline-muted"> destacados</span>
+						{content.portfolioSection.heading}
+						<span class="headline-muted">{content.portfolioSection.headingMuted}</span>
 					</h2>
 				</div>
 				<p class="featured-work__count text-eyebrow-brand">
 					<span class="featured-work__count-num">{String(projects.length).padStart(2, "0")}</span>
-					sitios · 2022 — 2026
+					{content.portfolioSection.countLabel}
 				</p>
 			</div>
 			<p class="text-muted-body mt-5 max-w-2xl text-base sm:text-lg">
-				Selección de webs en producción. Haz clic en cualquier proyecto para verlo en vivo.
+				{content.portfolioSection.intro}
 			</p>
 		</header>
 
-		<ul class="featured-work__grid reveal-stagger mt-12 lg:mt-14" aria-label="Proyectos publicados">
+		<ul class="featured-work__grid reveal-stagger mt-12 lg:mt-14" aria-label={content.portfolioSection.listAria}>
 			{
-				projects.map((p, index) => (
+				projects.map((p, index) => {
+					const copy = content.portfolioSection.projects[p.id];
+					const imageAlt = copy?.imageAlt ?? `Screenshot of ${p.title}`;
+					const tags = copy?.tags ?? p.tags;
+					return (
 					<li class="featured-work__item" style={`--card-index: ${index}`}>
 						<a
 							href={p.url}
@@ -65,7 +77,7 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 									{p.scrollGif ? (
 										<img
 											src={p.scrollGif}
-											alt=""
+											alt={imageAlt}
 											class="featured-work__img h-full w-full object-cover object-top"
 											loading="lazy"
 											decoding="async"
@@ -73,7 +85,7 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 									) : p.previewLocal ? (
 										<img
 											src={p.previewLocal}
-											alt=""
+											alt={imageAlt}
 											class="featured-work__img portfolio-preview-pan max-h-none w-full"
 											loading="lazy"
 											decoding="async"
@@ -83,7 +95,7 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 									) : (
 										<img
 											src={siteScreenshotUrl(p.url)}
-											alt=""
+											alt={imageAlt}
 											class="featured-work__img portfolio-preview-pan max-h-none w-full"
 											loading="lazy"
 											decoding="async"
@@ -110,14 +122,15 @@ import { siteScreenshotUrl } from "../lib/siteScreenshot";
 									>
 										{p.year}
 									</span>
-									{p.tags.slice(0, 2).map((t) => (
-										<span class="featured-work__tag text-[11px] font-medium text-white/45">{t}</span>
+									{p.tags.slice(0, 2).map((t, tagIndex) => (
+										<span class="featured-work__tag text-[11px] font-medium text-white/45">{tags[tagIndex] ?? t}</span>
 									))}
 								</div>
 							</div>
 						</a>
 					</li>
-				))
+					);
+				})
 			}
 		</ul>
 	</div>

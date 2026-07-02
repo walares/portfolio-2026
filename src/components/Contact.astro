@@ -12,13 +12,19 @@ import {
 } from "@lucide/astro";
 
 import { site } from "../data/site";
+import { formatWhatsappPrefill, getLocaleContent, type Locale } from "../i18n";
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const content = getLocaleContent(locale);
 
 const formAction = import.meta.env.PUBLIC_FORMSPREE_ACTION as string | undefined;
-const formNext = formAction ? `${site.url}/?enviado=1#contacto` : undefined;
+const formNext = formAction ? `${site.url}${content.path}?enviado=1#contacto` : undefined;
 
-const whatsappPrefill = encodeURIComponent(
-	`Hola ${site.personName.split(" ")[0]}, me gustaría hablar sobre un proyecto con ${site.name}.`,
-);
+const whatsappPrefill = encodeURIComponent(formatWhatsappPrefill(content, site));
 const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 ---
 
@@ -30,16 +36,16 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 	<div class="mx-auto max-w-6xl">
 		<div class="cta-block reveal relative px-6 py-14 sm:px-10 sm:py-16 lg:px-14">
 			<div class="relative z-10 mx-auto max-w-2xl text-center">
-				<p class="eyebrow-pill mb-5 justify-center">Contacto</p>
+				<p class="eyebrow-pill mb-5 justify-center">{content.contact.eyebrow}</p>
 				<h2
 					id="contacto-heading"
 					class="headline-section text-3xl text-white sm:text-4xl lg:text-[2.75rem]"
 				>
-					Construyamos la web
-					<span class="mt-1 block text-brand-green">que necesitas.</span>
+					{content.contact.heading}
+					<span class="mt-1 block text-brand-green">{content.contact.headingAccent}</span>
 				</h2>
 				<p class="text-muted-body mt-4 text-base sm:text-lg">
-					Cuéntanos sobre tu proyecto y te ofrecemos una asesoría inicial.
+					{content.contact.intro}
 				</p>
 				<div class="mt-8 flex flex-wrap items-center justify-center gap-3">
 					<a
@@ -49,16 +55,35 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 						class="btn-primary group inline-flex items-center gap-2 rounded-full bg-brand-green px-7 py-3.5 text-sm font-semibold text-brand-dark"
 					>
 						<MessageCircle size={18} stroke-width={2} class="lucide-anim-hover-pop shrink-0" aria-hidden="true" />
-						WhatsApp
+						{content.contact.whatsapp}
 					</a>
 					<a
 						href={`mailto:${site.email}`}
 						class="btn-ghost inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/[0.04] px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-white/[0.07]"
 					>
 						<Mail size={18} stroke-width={2} aria-hidden="true" />
-						Correo
+						{content.contact.email}
 					</a>
 				</div>
+			</div>
+		</div>
+
+		<div class="reveal mx-auto mt-14 max-w-2xl">
+			<h3 id="faq-heading" class="headline-section text-center text-2xl text-white sm:text-3xl">
+				{content.contact.faqHeading}
+				<span class="text-brand-green"> {content.contact.faqHeadingAccent}</span>
+			</h3>
+			<div class="mt-8 space-y-3" role="list" aria-labelledby="faq-heading">
+				{
+					content.faqs.map((faq) => (
+						<details class="card-pomelo group p-5 sm:p-6" role="listitem">
+							<summary class="cursor-pointer list-none font-display text-base font-medium text-white outline-none ring-brand-green/50 marker:content-none focus-visible:rounded-lg focus-visible:ring-2 [&::-webkit-details-marker]:hidden">
+								{faq.question}
+							</summary>
+							<p class="text-muted-body mt-3 text-sm leading-relaxed">{faq.answer}</p>
+						</details>
+					))
+				}
 			</div>
 		</div>
 
@@ -71,9 +96,9 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 					<div class="min-w-0 text-left">
 						<p class="flex items-center gap-2 text-sm font-semibold text-white">
 							<MessageCircle size={17} stroke-width={2} class="text-brand-green" aria-hidden="true" />
-							WhatsApp · AE Webdes
+							WhatsApp · {site.name}
 						</p>
-						<p class="text-muted-caption mt-1 text-xs">Alejandro Arango Web Design</p>
+						<p class="text-muted-caption mt-1 text-xs">{site.legalName}</p>
 						<p class="mt-2 flex items-center gap-2 font-mono text-sm tabular-nums text-white/82">
 							<AtSign size={15} stroke-width={2} class="text-brand-green/85" aria-hidden="true" />
 							{site.phoneDisplay}
@@ -86,7 +111,7 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 					rel="noopener noreferrer"
 					class="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-brand-green/35 bg-brand-green/12 px-5 py-3 text-sm font-semibold text-brand-green transition hover:bg-brand-green/22"
 				>
-					Abrir chat
+					{content.contact.openChat}
 				</a>
 			</div>
 
@@ -98,14 +123,14 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 						class="card-pomelo mt-6 hidden border border-brand-green/35 bg-brand-green/10 p-4 text-center text-sm text-brand-green"
 						role="status"
 					>
-						Mensaje enviado. Te responderemos pronto.
+						{content.contact.formSent}
 					</p>
 					<form
 						action={formAction}
 						method="POST"
 						class="card-pomelo mt-6 space-y-5 p-6 sm:p-8"
 					>
-						<input type="hidden" name="_subject" value={`Nuevo mensaje — ${site.name}`} />
+						<input type="hidden" name="_subject" value={content.contact.formSubject} />
 						{formNext && <input type="hidden" name="_next" value={formNext} />}
 						<input
 							type="text"
@@ -118,7 +143,7 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 						<div>
 							<label for="nombre" class="flex items-center gap-2 text-sm font-medium text-white/88">
 								<CircleUserRound size={16} stroke-width={2} class="text-brand-green" aria-hidden="true" />
-								Nombre
+								{content.contact.nameLabel}
 							</label>
 							<input
 								id="nombre"
@@ -127,13 +152,13 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 								required
 								autocomplete="name"
 								class="mt-2 w-full rounded-xl border border-white/[0.11] bg-brand-dark/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-brand-gray focus:border-brand-green/45 focus:ring-2 focus:ring-brand-green/40"
-								placeholder="Tu nombre"
+								placeholder={content.contact.namePlaceholder}
 							/>
 						</div>
 						<div>
 							<label for="email" class="flex items-center gap-2 text-sm font-medium text-white/88">
 								<Mail size={16} stroke-width={2} class="text-brand-gold/90" aria-hidden="true" />
-								Correo electrónico
+								{content.contact.emailLabel}
 							</label>
 							<input
 								id="email"
@@ -142,13 +167,13 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 								required
 								autocomplete="email"
 								class="mt-2 w-full rounded-xl border border-white/[0.11] bg-brand-dark/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-brand-gray focus:border-brand-green/45 focus:ring-2 focus:ring-brand-green/40"
-								placeholder="correo@empresa.com"
+								placeholder={content.contact.emailPlaceholder}
 							/>
 						</div>
 						<div>
 							<label for="mensaje" class="flex items-center gap-2 text-sm font-medium text-white/88">
 								<MessageSquareMore size={16} stroke-width={2} class="text-brand-green" aria-hidden="true" />
-								Mensaje
+								{content.contact.messageLabel}
 							</label>
 							<textarea
 								id="mensaje"
@@ -156,7 +181,7 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 								rows={5}
 								required
 								class="mt-2 w-full resize-y rounded-xl border border-white/[0.11] bg-brand-dark/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-brand-gray focus:border-brand-green/45 focus:ring-2 focus:ring-brand-green/40"
-								placeholder="¿En qué podemos ayudarte?"
+								placeholder={content.contact.messagePlaceholder}
 							/>
 						</div>
 						<button
@@ -164,12 +189,12 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 							class="btn-primary group flex w-full items-center justify-center gap-2 rounded-full bg-brand-green py-3 text-sm font-semibold text-brand-dark"
 						>
 							<Send size={18} stroke-width={2} class="lucide-anim-hover-pop shrink-0" aria-hidden="true" />
-							Enviar mensaje
+							{content.contact.submit}
 						</button>
 						<p class="text-eyebrow-brand flex flex-wrap items-center justify-center gap-2 text-center text-xs">
 							<ShieldCheck size={14} stroke-width={2} class="text-brand-green" aria-hidden="true" />
 							<span>
-								Envío con{" "}
+								{content.contact.formspreeNote}{" "}
 								<a
 									href="https://formspree.io"
 									class="underline decoration-white/28 hover:text-white"
@@ -188,7 +213,6 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 						if (params.get("enviado") === "1") {
 							document.getElementById("contacto-enviado")?.classList.remove("hidden");
 							const contacto = document.getElementById("contacto");
-							// Formspree redirige con #contacto; el navegador ya posiciona la vista
 							if (contacto && !window.location.hash.includes("contacto")) {
 								smoothScrollToElement(contacto, { block: "start" });
 							}
@@ -199,11 +223,12 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 					<div class="card-pomelo mt-6 p-6 text-center sm:p-8">
 						<Settings2 size={34} stroke-width={1.5} class="mx-auto text-brand-green/85" aria-hidden="true" />
 						<p class="text-muted-body mt-4 text-sm">
-							Activa Formspree y añade{" "}
+							{content.contact.formspreeSetup}{" "}
 							<code class="rounded bg-white/10 px-1.5 py-0.5 text-xs text-brand-gold">
 								PUBLIC_FORMSPREE_ACTION
 							</code>{" "}
-							en <code class="rounded bg-white/10 px-1.5 py-0.5 text-xs">.env</code>
+							{locale === "es" ? "en" : "in"}{" "}
+							<code class="rounded bg-white/10 px-1.5 py-0.5 text-xs">.env</code>
 						</p>
 					</div>
 				)

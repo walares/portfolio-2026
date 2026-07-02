@@ -1,25 +1,20 @@
 ---
-/** Franja de confianza — estilo marquee Pomelo */
-const items = [
-	"Velocidad",
-	"Eficacia",
-	"Sostenibilidad",
-	"WordPress",
-	"Tailwind",
-	"SEO técnico",
-	"UI/UX",
-	"Rendimiento",
-	"Accesibilidad",
-	"Vercel",
-] as const;
+import { getLocaleContent, type Locale } from "../i18n";
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const content = getLocaleContent(locale);
 ---
 
 <div class="relative border-y border-white/[0.06] bg-surface-1/80 py-6" aria-hidden="true">
-	<p class="sr-only">Enfoques y valores de trabajo</p>
+	<p class="sr-only">{content.marquee.srOnly}</p>
 	<div class="marquee" data-marquee>
 		<div class="marquee__inner gap-10 px-6">
 			{
-				items.map((label) => (
+				content.marquee.items.map((label) => (
 					<span class="inline-flex shrink-0 items-center gap-3 whitespace-nowrap text-sm font-medium tracking-wide text-white/45">
 						<span class="size-1.5 rounded-full bg-brand-green/70" />
 						{label}
