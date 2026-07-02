@@ -1,0 +1,98 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../data/site";
+import { alternateServicePath, servicePath, type ServiceSlug } from "../data/services";
+import { getLocaleContent, getServicePageContent, type Locale } from "../i18n";
+import Navbar from "./Navbar.astro";
+import Footer from "./Footer.astro";
+import { ArrowLeft, ArrowRight, MessageCircle } from "@lucide/astro";
+
+interface Props {
+	locale: Locale;
+	serviceSlug: ServiceSlug;
+}
+
+const { locale, serviceSlug } = Astro.props;
+const content = getLocaleContent(locale);
+const page = getServicePageContent(locale, serviceSlug);
+const pagePath = servicePath(locale, serviceSlug);
+const homeBase = content.path;
+const alternateHref =
+	alternateServicePath(pagePath.replace(/\/$/, "")) ?? `${getLocaleContent(locale === "es" ? "en" : "es").path}`;
+
+const whatsappPrefill = encodeURIComponent(page.whatsappPrefill);
+const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
+---
+
+<Layout locale={locale} title={page.title} description={page.description} path={pagePath}>
+	<Navbar {locale} {homeBase} {alternateHref} />
+	<main id="contenido-principal" tabindex="-1" class="pt-28 sm:pt-32">
+		<article class="mx-auto max-w-4xl px-4 pb-20 sm:px-6 lg:px-8">
+			<a
+				href={homeBase}
+				class="reveal inline-flex items-center gap-2 text-sm font-medium text-white/65 transition hover:text-brand-green"
+			>
+				<ArrowLeft size={16} stroke-width={2} aria-hidden="true" />
+				{page.backHome}
+			</a>
+
+			<header class="reveal mt-8 max-w-3xl">
+				<h1 class="headline-section text-pretty text-4xl text-white sm:text-5xl">
+					{page.h1}
+					<span class="mt-1 block text-brand-green">{page.h1Accent}</span>
+				</h1>
+				<p class="text-muted-body mt-6 text-base leading-relaxed sm:text-lg">{page.intro}</p>
+			</header>
+
+			<div class="reveal mt-12 grid gap-6 lg:grid-cols-2">
+				<section class="card-pomelo p-6 sm:p-7" aria-labelledby="benefits-title">
+					<h2 id="benefits-title" class="font-display text-lg font-medium text-white">
+						{page.benefitsTitle}
+					</h2>
+					<ul class="text-muted-body mt-4 space-y-2.5 text-sm leading-relaxed">
+						{page.benefits.map((item) => (
+							<li class="flex gap-2">
+								<span class="mt-2 size-1.5 shrink-0 rounded-full bg-brand-green" aria-hidden="true" />
+								{item}
+							</li>
+						))}
+					</ul>
+				</section>
+
+				<section class="card-pomelo p-6 sm:p-7" aria-labelledby="includes-title">
+					<h2 id="includes-title" class="font-display text-lg font-medium text-white">
+						{page.includesTitle}
+					</h2>
+					<ul class="text-muted-body mt-4 space-y-2.5 text-sm leading-relaxed">
+						{page.includes.map((item) => (
+							<li class="flex gap-2">
+								<span class="mt-2 size-1.5 shrink-0 rounded-full bg-brand-gold" aria-hidden="true" />
+								{item}
+							</li>
+						))}
+					</ul>
+				</section>
+			</div>
+
+			<div class="reveal mt-10 flex flex-wrap gap-3">
+				<a
+					href={whatsappHref}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="btn-primary group inline-flex items-center gap-2 rounded-full bg-brand-green px-7 py-3.5 text-sm font-semibold text-brand-dark"
+				>
+					<MessageCircle size={18} stroke-width={2} class="lucide-anim-hover-pop shrink-0" aria-hidden="true" />
+					{page.cta}
+				</a>
+				<a
+					href={`${homeBase}#contacto`}
+					class="btn-ghost inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/[0.04] px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-white/[0.07]"
+				>
+					{content.nav.contact}
+					<ArrowRight size={18} stroke-width={2} aria-hidden="true" />
+				</a>
+			</div>
+		</article>
+	</main>
+	<Footer {locale} {homeBase} />
+</Layout>

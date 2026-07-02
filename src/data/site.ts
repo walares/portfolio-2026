@@ -21,6 +21,8 @@ export const site = {
 	socialProfiles: ["https://www.linkedin.com/in/alejandro-arango-escobar/"] as readonly string[],
 	twitterHandle: "" as string,
 	logoPath: "/logo-ae.png",
+	/** Foto en /public (opcional). Si no existe, se muestran iniciales. */
+	aboutPhotoPath: "" as string,
 	ogImagePath: "/og-image.jpg",
 	ogImageWidth: 1200,
 	ogImageHeight: 630,

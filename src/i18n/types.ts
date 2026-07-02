@@ -5,6 +5,11 @@ export type FaqItem = {
 	answer: string;
 };
 
+export type StatItem = {
+	value: string;
+	label: string;
+};
+
 export type PortfolioCopy = {
 	description: string;
 	tags: string[];
@@ -45,6 +50,7 @@ export type LocaleContent = {
 	srIntro: string;
 	nav: {
 		home: string;
+		about: string;
 		services: string;
 		work: string;
 		contact: string;
@@ -53,6 +59,15 @@ export type LocaleContent = {
 		cta: string;
 		menu: string;
 		openMenuAria: string;
+	};
+	aboutSection: {
+		eyebrow: string;
+		heading: string;
+		headingAccent: string;
+		bio: string;
+		stats: readonly StatItem[];
+		cta: string;
+		photoAlt: string;
 	};
 	hero: {
 		eyebrow: string;
@@ -98,23 +113,14 @@ export type LocaleContent = {
 		faqHeading: string;
 		faqHeadingAccent: string;
 		openChat: string;
-		formSent: string;
-		formSubject: string;
-		nameLabel: string;
-		namePlaceholder: string;
-		emailLabel: string;
-		emailPlaceholder: string;
-		messageLabel: string;
-		messagePlaceholder: string;
-		submit: string;
-		formspreeNote: string;
-		formspreeSetup: string;
 		whatsappPrefill: string;
 	};
 	footer: {
 		tagline: string;
 		navAria: string;
 		backToTop: string;
+		emailLabel: string;
+		linkedinLabel: string;
 	};
 	seo: {
 		ogImageAlt: string;

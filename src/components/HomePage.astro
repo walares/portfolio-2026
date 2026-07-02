@@ -5,6 +5,7 @@ import { formatSrIntro, getLocaleContent, type Locale } from "../i18n";
 import Navbar from "../components/Navbar.astro";
 import Hero from "../components/Hero.astro";
 import LogoMarquee from "../components/LogoMarquee.astro";
+import AboutSection from "../components/AboutSection.astro";
 import ServicesBento from "../components/ServicesBento.astro";
 import PortfolioSection from "../components/PortfolioSection.astro";
 import Contact from "../components/Contact.astro";
@@ -19,16 +20,17 @@ const content = getLocaleContent(locale);
 ---
 
 <Layout {locale}>
-	<Navbar {locale} />
+	<Navbar {locale} homeBase={content.path} />
 	<main id="contenido-principal" tabindex="-1">
 		<p class="sr-only">
 			{formatSrIntro(content, site)}
 		</p>
 		<Hero {locale} />
 		<LogoMarquee {locale} />
+		<AboutSection {locale} />
 		<ServicesBento {locale} />
 		<PortfolioSection {locale} />
 		<Contact {locale} />
 	</main>
-	<Footer {locale} />
+	<Footer {locale} homeBase={content.path} />
 </Layout>

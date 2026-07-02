@@ -2,7 +2,6 @@
 import { ArrowUpRight, FolderOpen } from "@lucide/astro";
 import { portfolioProjects as projects } from "../data/portfolio";
 import { getLocaleContent, type Locale } from "../i18n";
-import { siteScreenshotUrl } from "../lib/siteScreenshot";
 
 interface Props {
 	locale: Locale;
@@ -54,6 +53,8 @@ const content = getLocaleContent(locale);
 					const copy = content.portfolioSection.projects[p.id];
 					const imageAlt = copy?.imageAlt ?? `Screenshot of ${p.title}`;
 					const tags = copy?.tags ?? p.tags;
+					const description = copy?.description ?? p.description;
+					const previewSrc = p.previewLocal ?? p.scrollGif;
 					return (
 					<li class="featured-work__item" style={`--card-index: ${index}`}>
 						<a
@@ -74,35 +75,20 @@ const content = getLocaleContent(locale);
 								/>
 								<div class="featured-work__shine" aria-hidden="true" />
 								<div class="featured-work__media-inner">
-									{p.scrollGif ? (
+									{previewSrc ? (
 										<img
-											src={p.scrollGif}
+											src={previewSrc}
 											alt={imageAlt}
-											class="featured-work__img h-full w-full object-cover object-top"
-											loading="lazy"
-											decoding="async"
-										/>
-									) : p.previewLocal ? (
-										<img
-											src={p.previewLocal}
-											alt={imageAlt}
-											class="featured-work__img portfolio-preview-pan max-h-none w-full"
+											class:list={[
+												"featured-work__img max-h-none w-full",
+												p.scrollGif ? "h-full object-cover object-top" : "portfolio-preview-pan",
+											]}
 											loading="lazy"
 											decoding="async"
 											width="1200"
 											height="750"
 										/>
-									) : (
-										<img
-											src={siteScreenshotUrl(p.url)}
-											alt={imageAlt}
-											class="featured-work__img portfolio-preview-pan max-h-none w-full"
-											loading="lazy"
-											decoding="async"
-											width="1200"
-											height="750"
-										/>
-									)}
+									) : null}
 								</div>
 								<span class="featured-work__visit" aria-hidden="true">
 									<ArrowUpRight size={18} stroke-width={2} class="featured-work__visit-icon" />
@@ -113,7 +99,8 @@ const content = getLocaleContent(locale);
 									<span class="featured-work__title-text">{p.title}</span>
 									<span class="featured-work__title-line" aria-hidden="true" />
 								</h3>
-								<div class="featured-work__meta">
+								<p class="text-muted-body mt-2 line-clamp-2 text-sm leading-relaxed">{description}</p>
+								<div class="featured-work__meta mt-3">
 									<span
 										class:list={[
 											"featured-work__pill rounded-full px-2.5 py-0.5 text-[11px] font-semibold",

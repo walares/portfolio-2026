@@ -1,20 +1,24 @@
 ---
-import { ArrowUp } from "@lucide/astro";
+import { ArrowUp, ExternalLink, Mail } from "@lucide/astro";
 import BrandLogo from "./BrandLogo.astro";
 import { site } from "../data/site";
 import { formatNavAria, getLocaleContent, type Locale } from "../i18n";
 
 interface Props {
 	locale: Locale;
+	homeBase?: string;
 }
 
-const { locale } = Astro.props;
+const { locale, homeBase: homeBaseProp } = Astro.props;
 const content = getLocaleContent(locale);
+const homeBase = homeBaseProp ?? content.path;
+const linkedin = site.socialProfiles[0];
 
 const footerLinks = [
-	{ href: "#servicios", label: content.nav.services },
-	{ href: "#work", label: content.nav.work },
-	{ href: "#contacto", label: content.nav.contact },
+	{ href: `${homeBase}#sobre-mi`, label: content.nav.about },
+	{ href: `${homeBase}#servicios`, label: content.nav.services },
+	{ href: `${homeBase}#work`, label: content.nav.work },
+	{ href: `${homeBase}#contacto`, label: content.nav.contact },
 ] as const;
 ---
 
@@ -23,7 +27,7 @@ const footerLinks = [
 		<div class="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
 			<div>
 				<a
-					href="#inicio"
+					href={homeBase}
 					class="inline-flex rounded-lg outline-none ring-brand-green/50 transition hover:opacity-90 focus-visible:ring-2"
 					aria-label={formatNavAria(content.nav.homeAria, site.name)}
 				>
@@ -32,6 +36,28 @@ const footerLinks = [
 				<p class="text-muted-caption mt-3 max-w-xs text-sm">
 					{content.footer.tagline}
 				</p>
+				<div class="mt-4 flex flex-wrap gap-3">
+					<a
+						href={`mailto:${site.email}`}
+						class="inline-flex items-center gap-2 text-sm font-medium text-white/65 transition hover:text-brand-green"
+					>
+						<Mail size={15} stroke-width={2} aria-hidden="true" />
+						{content.footer.emailLabel}
+					</a>
+					{
+						linkedin ? (
+							<a
+								href={linkedin}
+								target="_blank"
+								rel="noopener noreferrer me"
+								class="inline-flex items-center gap-2 text-sm font-medium text-white/65 transition hover:text-brand-green"
+							>
+								<ExternalLink size={15} stroke-width={2} aria-hidden="true" />
+								{content.footer.linkedinLabel}
+							</a>
+						) : null
+					}
+				</div>
 			</div>
 			<nav aria-label={content.footer.navAria}>
 				<ul class="flex flex-wrap gap-x-6 gap-y-2">
@@ -50,7 +76,7 @@ const footerLinks = [
 				</ul>
 			</nav>
 			<a
-				href="#inicio"
+				href={`${homeBase}#inicio`}
 				class="inline-flex items-center gap-2 text-sm font-semibold text-brand-green transition hover:text-brand-gold"
 			>
 				{content.footer.backToTop}

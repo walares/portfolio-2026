@@ -1,4 +1,11 @@
 @import "tailwindcss";
+@import "@fontsource/plus-jakarta-sans/400.css";
+@import "@fontsource/plus-jakarta-sans/500.css";
+@import "@fontsource/plus-jakarta-sans/600.css";
+@import "@fontsource/plus-jakarta-sans/700.css";
+@import "@fontsource/syne/500.css";
+@import "@fontsource/syne/600.css";
+@import "@fontsource/syne/700.css";
 
 @theme {
   /* AE Webdes — identidad visual */
@@ -42,7 +49,7 @@ body {
     radial-gradient(ellipse 90% 55% at 50% -15%, rgb(99 185 149 / 0.14), transparent 58%),
     radial-gradient(ellipse 50% 40% at 100% 20%, rgb(224 159 62 / 0.06), transparent 50%),
     linear-gradient(180deg, var(--color-surface-1) 0%, var(--color-surface-0) 48%);
-  background-attachment: fixed;
+  background-attachment: scroll;
   color: rgb(237 239 237);
   font-family: var(--font-sans);
   text-rendering: optimizeLegibility;

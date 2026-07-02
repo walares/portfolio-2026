@@ -3,6 +3,7 @@ import { absoluteUrl, site } from "../data/site";
 import {
 	defaultLocale,
 	getAlternateLocale,
+	getFaqs,
 	getLocaleContent,
 	localePath,
 	type Locale,
@@ -146,7 +147,7 @@ export function buildJsonLd(locale: Locale = defaultLocale, path?: string) {
 	const faqPage = {
 		"@type": "FAQPage",
 		"@id": `${pageUrl}#faq`,
-		mainEntity: content.faqs.map((faq) => ({
+		mainEntity: getFaqs(content, site.email).map((faq) => ({
 			"@type": "Question",
 			name: faq.question,
 			acceptedAnswer: {

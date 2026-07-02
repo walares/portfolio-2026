@@ -10,7 +10,9 @@ import {
 	Globe2,
 	ShoppingBag,
 	Building2,
+	ArrowUpRight,
 } from "@lucide/astro";
+import { servicePath, useCaseServiceSlugs } from "../data/services";
 import { getLocaleContent, type Locale } from "../i18n";
 
 interface Props {
@@ -70,17 +72,23 @@ const accentIcon: Record<"green" | "gold", string> = {
 					content.servicesSection.useCases.map(({ title, body }, index) => {
 						const Icon = useCaseIcons[index];
 						const accent = index % 2 === 0 ? "green" : "gold";
+						const serviceSlug = useCaseServiceSlugs[index];
+						const href = servicePath(locale, serviceSlug);
 						return (
-							<article class="card-pomelo flex min-h-[220px] flex-col p-6">
+							<a
+								href={href}
+								class="card-pomelo group flex min-h-[220px] flex-col p-6 transition hover:border-brand-green/25"
+							>
 								<div class:list={["mb-4 inline-flex rounded-xl border p-3", accentIcon[accent]]}>
 									<Icon size={22} stroke-width={1.85} aria-hidden="true" />
 								</div>
 								<h3 class="font-display text-xl font-medium tracking-tight text-white">{title}</h3>
 								<p class="text-muted-body mt-2 flex-1 text-sm leading-relaxed">{body}</p>
-								<span class="mt-4 text-xs font-semibold uppercase tracking-widest text-brand-green/80">
+								<span class="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-brand-green/80 group-hover:text-brand-green">
 									{content.servicesSection.explore}
+									<ArrowUpRight size={14} stroke-width={2.25} class="shrink-0" aria-hidden="true" />
 								</span>
-							</article>
+							</a>
 						);
 					})
 				}

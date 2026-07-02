@@ -9,10 +9,13 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "previews": "node scripts/fetch-portfolio-previews.mjs",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",
+    "@fontsource/plus-jakarta-sans": "^5.2.8",
+    "@fontsource/syne": "^5.2.7",
     "@lucide/astro": "^1.16.0",
     "@tailwindcss/vite": "^4.3.0",
     "astro": "^6.3.3",

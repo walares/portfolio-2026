@@ -1,18 +1,8 @@
 ---
-import {
-	Mail,
-	Send,
-	MessageCircle,
-	Smartphone,
-	CircleUserRound,
-	AtSign,
-	ShieldCheck,
-	MessageSquareMore,
-	Settings2,
-} from "@lucide/astro";
+import { Mail, MessageCircle, Smartphone, Phone } from "@lucide/astro";
 
 import { site } from "../data/site";
-import { formatWhatsappPrefill, getLocaleContent, type Locale } from "../i18n";
+import { formatWhatsappPrefill, getFaqs, getLocaleContent, type Locale } from "../i18n";
 
 interface Props {
 	locale: Locale;
@@ -20,9 +10,7 @@ interface Props {
 
 const { locale } = Astro.props;
 const content = getLocaleContent(locale);
-
-const formAction = import.meta.env.PUBLIC_FORMSPREE_ACTION as string | undefined;
-const formNext = formAction ? `${site.url}${content.path}?enviado=1#contacto` : undefined;
+const faqs = getFaqs(content, site.email);
 
 const whatsappPrefill = encodeURIComponent(formatWhatsappPrefill(content, site));
 const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
@@ -75,7 +63,7 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 			</h3>
 			<div class="mt-8 space-y-3" role="list" aria-labelledby="faq-heading">
 				{
-					content.faqs.map((faq) => (
+					faqs.map((faq) => (
 						<details class="card-pomelo group p-5 sm:p-6" role="listitem">
 							<summary class="cursor-pointer list-none font-display text-base font-medium text-white outline-none ring-brand-green/50 marker:content-none focus-visible:rounded-lg focus-visible:ring-2 [&::-webkit-details-marker]:hidden">
 								{faq.question}
@@ -100,7 +88,7 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 						</p>
 						<p class="text-muted-caption mt-1 text-xs">{site.legalName}</p>
 						<p class="mt-2 flex items-center gap-2 font-mono text-sm tabular-nums text-white/82">
-							<AtSign size={15} stroke-width={2} class="text-brand-green/85" aria-hidden="true" />
+							<Phone size={15} stroke-width={2} class="text-brand-green/85" aria-hidden="true" />
 							{site.phoneDisplay}
 						</p>
 					</div>
@@ -114,125 +102,6 @@ const whatsappHref = `https://wa.me/${site.phoneE164}?text=${whatsappPrefill}`;
 					{content.contact.openChat}
 				</a>
 			</div>
-
-			{
-				formAction ? (
-					<>
-					<p
-						id="contacto-enviado"
-						class="card-pomelo mt-6 hidden border border-brand-green/35 bg-brand-green/10 p-4 text-center text-sm text-brand-green"
-						role="status"
-					>
-						{content.contact.formSent}
-					</p>
-					<form
-						action={formAction}
-						method="POST"
-						class="card-pomelo mt-6 space-y-5 p-6 sm:p-8"
-					>
-						<input type="hidden" name="_subject" value={content.contact.formSubject} />
-						{formNext && <input type="hidden" name="_next" value={formNext} />}
-						<input
-							type="text"
-							name="_gotcha"
-							tabindex="-1"
-							autocomplete="off"
-							class="sr-only"
-							aria-hidden="true"
-						/>
-						<div>
-							<label for="nombre" class="flex items-center gap-2 text-sm font-medium text-white/88">
-								<CircleUserRound size={16} stroke-width={2} class="text-brand-green" aria-hidden="true" />
-								{content.contact.nameLabel}
-							</label>
-							<input
-								id="nombre"
-								name="name"
-								type="text"
-								required
-								autocomplete="name"
-								class="mt-2 w-full rounded-xl border border-white/[0.11] bg-brand-dark/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-brand-gray focus:border-brand-green/45 focus:ring-2 focus:ring-brand-green/40"
-								placeholder={content.contact.namePlaceholder}
-							/>
-						</div>
-						<div>
-							<label for="email" class="flex items-center gap-2 text-sm font-medium text-white/88">
-								<Mail size={16} stroke-width={2} class="text-brand-gold/90" aria-hidden="true" />
-								{content.contact.emailLabel}
-							</label>
-							<input
-								id="email"
-								name="email"
-								type="email"
-								required
-								autocomplete="email"
-								class="mt-2 w-full rounded-xl border border-white/[0.11] bg-brand-dark/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-brand-gray focus:border-brand-green/45 focus:ring-2 focus:ring-brand-green/40"
-								placeholder={content.contact.emailPlaceholder}
-							/>
-						</div>
-						<div>
-							<label for="mensaje" class="flex items-center gap-2 text-sm font-medium text-white/88">
-								<MessageSquareMore size={16} stroke-width={2} class="text-brand-green" aria-hidden="true" />
-								{content.contact.messageLabel}
-							</label>
-							<textarea
-								id="mensaje"
-								name="message"
-								rows={5}
-								required
-								class="mt-2 w-full resize-y rounded-xl border border-white/[0.11] bg-brand-dark/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-brand-gray focus:border-brand-green/45 focus:ring-2 focus:ring-brand-green/40"
-								placeholder={content.contact.messagePlaceholder}
-							/>
-						</div>
-						<button
-							type="submit"
-							class="btn-primary group flex w-full items-center justify-center gap-2 rounded-full bg-brand-green py-3 text-sm font-semibold text-brand-dark"
-						>
-							<Send size={18} stroke-width={2} class="lucide-anim-hover-pop shrink-0" aria-hidden="true" />
-							{content.contact.submit}
-						</button>
-						<p class="text-eyebrow-brand flex flex-wrap items-center justify-center gap-2 text-center text-xs">
-							<ShieldCheck size={14} stroke-width={2} class="text-brand-green" aria-hidden="true" />
-							<span>
-								{content.contact.formspreeNote}{" "}
-								<a
-									href="https://formspree.io"
-									class="underline decoration-white/28 hover:text-white"
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									Formspree
-								</a>
-							</span>
-						</p>
-					</form>
-					<script>
-						import { smoothScrollToElement } from "../scripts/smooth-scroll";
-
-						const params = new URLSearchParams(window.location.search);
-						if (params.get("enviado") === "1") {
-							document.getElementById("contacto-enviado")?.classList.remove("hidden");
-							const contacto = document.getElementById("contacto");
-							if (contacto && !window.location.hash.includes("contacto")) {
-								smoothScrollToElement(contacto, { block: "start" });
-							}
-						}
-					</script>
-					</>
-				) : (
-					<div class="card-pomelo mt-6 p-6 text-center sm:p-8">
-						<Settings2 size={34} stroke-width={1.5} class="mx-auto text-brand-green/85" aria-hidden="true" />
-						<p class="text-muted-body mt-4 text-sm">
-							{content.contact.formspreeSetup}{" "}
-							<code class="rounded bg-white/10 px-1.5 py-0.5 text-xs text-brand-gold">
-								PUBLIC_FORMSPREE_ACTION
-							</code>{" "}
-							{locale === "es" ? "en" : "in"}{" "}
-							<code class="rounded bg-white/10 px-1.5 py-0.5 text-xs">.env</code>
-						</p>
-					</div>
-				)
-			}
 		</div>
 	</div>
 </section>

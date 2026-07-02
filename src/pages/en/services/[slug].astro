@@ -1,0 +1,15 @@
+---
+import ServicePageLayout from "../../../components/ServicePageLayout.astro";
+import { serviceSlugs, serviceSlugMap, type ServiceSlug } from "../../../data/services";
+
+export function getStaticPaths() {
+	return serviceSlugs.map((slug) => ({
+		params: { slug: serviceSlugMap[slug].en },
+		props: { serviceSlug: slug satisfies ServiceSlug, locale: "en" as const },
+	}));
+}
+
+const { serviceSlug, locale } = Astro.props;
+---
+
+<ServicePageLayout {locale} {serviceSlug} />
